@@ -1,0 +1,74 @@
+# Arquitetura de Microsserviços para SplitPay IVA
+
+Este documento detalha o plano para separar o seu projeto (atualmente concentrado no arquivo `splitpay_iva_dual_dashboard.html`) em uma **Arquitetura de Microsserviços utilizando Java (Spring Boot)**, com banco de dados e hospedagem totalmente **gratuitos**.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Aprovação Necessária**
+> Por favor, revise esta arquitetura e as escolhas de tecnologia. Se concordar, me avise para que eu comece a gerar o código base e os manuais de deploy!
+
+## Visão Geral da Arquitetura
+
+O sistema será dividido da seguinte forma:
+
+1.  **Frontend (UI):** O seu dashboard HTML/CSS/JS (com integrações via fetch/axios).
+2.  **API Gateway:** Ponto de entrada das requisições.
+3.  **Microsserviço de Transações:** Gerencia os pagamentos, cálculos de split (IBS/CBS) e simulador.
+4.  **Microsserviço de Conciliação:** Processa as notas fiscais (NF-e) e verifica divergências (ROC).
+5.  **Banco de Dados:** Banco relacional para armazenar transações e métricas.
+
+### Tecnologias Escolhidas (Atualizadas e Gratuitas)
+
+*   **Linguagem:** Java 21 (versão LTS mais recente).
+*   **Framework:** Spring Boot 3.2.x (com Spring Cloud para microsserviços).
+*   **Banco de Dados:** **PostgreSQL** (Hospedado gratuitamente no **Neon** ou **Supabase**).
+*   **Hospedagem Backend (Java):** **Render** ou **Railway** (Ambos possuem planos gratuitos ou créditos iniciais "Free Tier" excelentes para Spring Boot).
+*   **Hospedagem Frontend (Dashboard):** **Vercel** ou **Netlify** (100% gratuitos para sites estáticos).
+
+---
+
+## Proposed Changes
+
+### 1. Banco de Dados
+Configuraremos um banco de dados **PostgreSQL na nuvem (Neon tech)**.
+*   Tabelas: `transactions`, `conciliations`, `tax_rates`.
+
+### 2. Backend (Java / Spring Boot)
+
+Criaremos os seguintes projetos Spring Boot:
+
+#### [NEW] `splitpay-api-gateway`
+Serviço responsável por rotear as chamadas do frontend para os serviços corretos.
+*   **Tecnologia:** Spring Cloud Gateway.
+
+#### [NEW] `splitpay-transaction-service`
+Responsável por salvar as transações e o cálculo de divisão de pagamentos (IVA Dual).
+*   **Tecnologia:** Spring Web, Spring Data JPA.
+
+#### [NEW] `splitpay-conciliation-service`
+Responsável pelo "match" entre o valor capturado pelo adquirente e a NF-e.
+*   **Tecnologia:** Spring Web, Spring Data JPA.
+
+### 3. Frontend
+
+#### [MODIFY] `c:\Users\cabra\Splitpaytest\splitpay_iva_dual_dashboard.html`
+Separaremos o estilo (CSS), o Javascript (lógica) e HTML. O Javascript será atualizado para fazer chamadas HTTP (REST) reais para o nosso `api-gateway` hospedado na nuvem.
+
+---
+
+## Open Questions
+
+> [!WARNING]
+> **Perguntas de Design**
+> 1. Você tem preferência por utilizar o **Maven** ou o **Gradle** como gerenciador de dependências dos projetos Java? (Recomendo Maven pela simplicidade).
+> 2. Você possui conta no **GitHub**? Precisaremos colocar o código lá para que plataformas como o **Render** e a **Vercel** façam o deploy gratuito automaticamente.
+
+## Verification Plan
+
+### Passo a Passo de Deploy (Pipeline Planejado)
+1. **GitHub:** Subir todo o código gerado num repositório.
+2. **Neon.tech (Banco):** Criar a conta gratuita, pegar a URL do PostgreSQL.
+3. **Render (Backend):** Conectar os repositórios Java ao Render. Eles serão compilados e executados online de graça.
+4. **Vercel (Frontend):** Conectar o arquivo HTML/JS do dashboard à Vercel.
+5. **Teste Final:** Abrir a URL pública gerada pela Vercel e verificar se o dashboard se comunica com o Java no Render salvando dados no PostgreSQL.

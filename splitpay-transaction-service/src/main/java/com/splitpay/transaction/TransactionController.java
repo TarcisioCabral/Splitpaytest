@@ -15,6 +15,7 @@ import java.util.Map;
 public class TransactionController {
 
     private final TransactionRepository transactionRepository;
+    private final org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
 
     @PostMapping("/process")
     public ResponseEntity<?> processTransaction(@RequestBody Map<String, Object> payload) {
@@ -40,6 +41,20 @@ public class TransactionController {
         tx.setFase(fase);
         
         transactionRepository.save(tx);
+
+        // Publish event to RabbitMQ
+        rabbitTemplate.convertAndSend("transaction.created", Map.of(
+            "transaction_id", tx.getId(),
+            "nfe_key", nfeKey,
+            "valor_bruto", valorBruto,
+            "ibs_retido", ibs,
+            "cbs_retido", cbs,
+            "liquido", liquido,
+            "adquirente", adquirente,
+            "segmento", segmento,
+            "fase", fase,
+            "timestamp", tx.getCreatedAt() != null ? tx.getCreatedAt().toString() : java.time.LocalDateTime.now().toString()
+        ));
 
         return ResponseEntity.ok(Map.of(
             "transaction_id", tx.getId(),
