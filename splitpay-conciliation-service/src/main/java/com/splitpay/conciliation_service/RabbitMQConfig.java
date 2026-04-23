@@ -10,10 +10,16 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     public static final String QUEUE_TRANSACTION_CREATED = "transaction.created";
+    public static final String QUEUE_CONCILIATION_COMPLETED = "conciliation.completed";
 
     @Bean
     public Queue transactionCreatedQueue() {
         return new Queue(QUEUE_TRANSACTION_CREATED, true); // durable = true
+    }
+
+    @Bean
+    public Queue conciliationCompletedQueue() {
+        return new Queue(QUEUE_CONCILIATION_COMPLETED, true);
     }
 
     @Bean

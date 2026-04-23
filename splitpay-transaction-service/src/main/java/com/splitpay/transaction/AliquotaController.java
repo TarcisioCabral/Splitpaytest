@@ -1,5 +1,7 @@
 package com.splitpay.transaction;
 
+import com.splitpay.transaction.service.IvaDualTaxService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,28 +13,19 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class AliquotaController {
 
+    @Autowired
+    private IvaDualTaxService ivaDualTaxService;
+
     @GetMapping("/{segmento}")
     public ResponseEntity<?> getAliquotas(@PathVariable String segmento) {
-        BigDecimal ibs = new BigDecimal("0.005");
-        BigDecimal cbs = new BigDecimal("0.005");
-        
-        // Mocked logic for segment reductions in test phase 2026
-        if ("alimentacao".equalsIgnoreCase(segmento) || "saude".equalsIgnoreCase(segmento)) {
-            ibs = ibs.multiply(new BigDecimal("0.4"));
-            cbs = cbs.multiply(new BigDecimal("0.4"));
-        } else if ("educacao".equalsIgnoreCase(segmento)) {
-            ibs = ibs.multiply(new BigDecimal("0.3"));
-            cbs = cbs.multiply(new BigDecimal("0.3"));
-        }
-
-        BigDecimal total = ibs.add(cbs);
+        Map<String, BigDecimal> rates = ivaDualTaxService.calculateRates(segmento, "2026_teste");
 
         return ResponseEntity.ok(Map.of(
                 "segmento", segmento,
                 "fase_atual", "2026_teste",
-                "ibs", ibs,
-                "cbs", cbs,
-                "total", total,
+                "ibs", rates.get("ibs"),
+                "cbs", rates.get("cbs"),
+                "total", rates.get("total"),
                 "cache_ttl_s", 3600,
                 "fonte", "comite_gestor_ibs"
         ));

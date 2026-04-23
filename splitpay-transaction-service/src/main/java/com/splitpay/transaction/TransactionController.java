@@ -16,6 +16,7 @@ public class TransactionController {
 
     private final TransactionRepository transactionRepository;
     private final org.springframework.amqp.rabbit.core.RabbitTemplate rabbitTemplate;
+    private final SseNotificationService sseNotificationService;
 
     @PostMapping("/process")
     public ResponseEntity<?> processTransaction(@RequestBody Map<String, Object> payload) {
@@ -56,14 +57,19 @@ public class TransactionController {
             "timestamp", tx.getCreatedAt() != null ? tx.getCreatedAt().toString() : java.time.LocalDateTime.now().toString()
         ));
 
-        return ResponseEntity.ok(Map.of(
+        // Return 202 Accepted, indicating processing has started but is not complete.
+        return ResponseEntity.accepted().body(Map.of(
             "transaction_id", tx.getId(),
-            "ibs_retido", ibs,
-            "cbs_retido", cbs,
-            "liquido", liquido,
-            "roc_confirmado", true,
-            "timestamp", tx.getCreatedAt()
+            "nfe_key", nfeKey,
+            "status", "PENDING",
+            "message", "Transação enviada para conciliação.",
+            "timestamp", tx.getCreatedAt() != null ? tx.getCreatedAt().toString() : java.time.LocalDateTime.now().toString()
         ));
+    }
+
+    @GetMapping("/stream/{nfeKey}")
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter streamConciliationUpdates(@PathVariable String nfeKey) {
+        return sseNotificationService.createEmitter(nfeKey);
     }
 
     @GetMapping("/recent")

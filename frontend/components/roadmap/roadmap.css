@@ -1,0 +1,47 @@
+/* Roadmap Styles */
+.timeline {
+    position: relative;
+    padding-left: 20px;
+    margin-top: 10px;
+}
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+}
+.tl-item {
+    position: relative;
+    margin-bottom: 20px;
+}
+.tl-dot {
+    position: absolute;
+    left: -20px;
+    top: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-dark);
+}
+.tl-dot.green { background: var(--green); }
+.tl-dot.amber { background: var(--amber); }
+.tl-dot.gray { background: var(--text3); }
+.tl-date {
+    font-size: 11px;
+    color: var(--text3);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.tl-event {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+.tl-desc {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.5;
+}

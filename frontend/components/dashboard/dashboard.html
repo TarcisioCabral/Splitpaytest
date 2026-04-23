@@ -1,0 +1,56 @@
+<div class="alert-banner">
+  <span>⚠</span>
+  <span><strong>Fase de Testes ativa:</strong> Alíquota IBS/CBS em 1% — vigência: Jan–Dez 2026. Implementação plena a partir de 2027.</span>
+</div>
+
+<div class="metrics-grid">
+  <div class="metric-card blue">
+    <div class="metric-label">Transações hoje</div>
+    <div class="metric-value" style="color:var(--primary)">1.847</div>
+    <div class="metric-sub up">↑ 12.4% vs ontem</div>
+  </div>
+  <div class="metric-card green">
+    <div class="metric-label">Split retido (IBS+CBS)</div>
+    <div class="metric-value" style="color:var(--green2)">R$<span id="retained">4.283</span></div>
+    <div class="metric-sub">conciliado em tempo real</div>
+  </div>
+  <div class="metric-card amber">
+    <div class="metric-label">Divergências pendentes</div>
+    <div class="metric-value" style="color:var(--amber2)">7</div>
+    <div class="metric-sub warn">↑ 3 nas últimas 2h</div>
+  </div>
+  <div class="metric-card purple">
+    <div class="metric-label">Latência ROC avg</div>
+    <div class="metric-value" style="color:var(--secondary)">142<span style="font-size:14px">ms</span></div>
+    <div class="metric-sub up">dentro do SLA 200ms</div>
+  </div>
+</div>
+
+<div class="three-col">
+  <div class="card">
+    <div class="card-title">Fluxo Split Payment — ciclo de vida <span class="card-badge badge-live">LIVE</span></div>
+    <div style="display:flex; justify-content:center; padding: 20px 0;">
+       <div style="font-size: 11px; color: var(--text3); text-align: center;">Checkout → SplitPay IVA (Middleware) → Adquirente → ROC</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Alíquotas vigentes</div>
+    <div class="aliq-grid">
+      <div class="aliq-item"><div class="aliq-name">IBS</div><div class="aliq-val" style="color:var(--primary)">0.5%</div><div class="aliq-phase">Teste 2026</div></div>
+      <div class="aliq-item"><div class="aliq-name">CBS</div><div class="aliq-val" style="color:var(--secondary)">0.5%</div><div class="aliq-phase">Teste 2026</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="card-title">Últimas transações processadas <span class="card-badge badge-live">LIVE</span></div>
+    <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:500;">Simular Envio NF-e</button>
+  </div>
+  <table class="tx-table">
+    <thead>
+      <tr><th>Chave NF-e</th><th>Valor Bruto</th><th>IBS retido</th><th>CBS retido</th><th>Adquirente</th><th>Status</th><th>Timestamp</th></tr>
+    </thead>
+    <tbody id="tx-body"></tbody>
+  </table>
+</div>

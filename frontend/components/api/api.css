@@ -1,0 +1,17 @@
+/* API Docs Styles */
+.api-endpoint { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+.api-header { padding: 12px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.api-header:hover { background: var(--surface3); }
+.method-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; font-family: var(--mono); }
+.m-post { background: rgba(16, 185, 129, 0.15); color: var(--green2); }
+.m-get { background: rgba(59, 130, 246, 0.15); color: var(--primary); }
+.api-path { font-family: var(--mono); font-size: 12px; }
+.api-body { display: none; padding: 0 16px 16px; border-top: 1px solid var(--border); }
+.api-body.open { display: block; }
+pre { background: var(--bg-dark); border-radius: 8px; padding: 14px; font-size: 11px; font-family: var(--mono); overflow-x: auto; margin-top: 10px; line-height: 1.6; }
+
+.c-cmt { color: var(--text3); }
+.c-key { color: var(--primary); }
+.c-str { color: var(--green2); }
+.c-num { color: var(--amber2); }
+.c-bool { color: var(--secondary); }

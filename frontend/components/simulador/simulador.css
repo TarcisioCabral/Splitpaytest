@@ -1,0 +1,17 @@
+/* Simulador Styles */
+.sim-form { display: grid; gap: 14px; }
+.sim-field { display: flex; flex-direction: column; gap: 6px; }
+.sim-field label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; }
+.sim-field input, .sim-field select { 
+    width: 100%; background: var(--surface2); border: 1px solid var(--border2); 
+    border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 13px; font-family: var(--mono); outline: none; 
+}
+.sim-btn { 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: var(--font-main);
+}
+
+.sim-result-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+.sim-result-row:last-child { border-bottom: none; }
+.sim-result-row .key { color: var(--text2); }
+.sim-result-row .val { font-family: var(--mono); font-weight: 600; }

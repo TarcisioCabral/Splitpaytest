@@ -1,26 +1,37 @@
 {
   "realm": "splitpay",
   "enabled": true,
-  "clients": [
-    {
-      "clientId": "splitpay-app",
-      "enabled": true,
-      "publicClient": true,
-      "directAccessGrantsEnabled": true,
-      "redirectUris": ["*"],
-      "webOrigins": ["*"]
-    }
-  ],
   "users": [
     {
       "username": "admin",
       "enabled": true,
+      "emailVerified": true,
+      "firstName": "Admin",
+      "lastName": "Splitpay",
+      "email": "admin@splitpay.com",
+      "requiredActions": [],
       "credentials": [
         {
           "type": "password",
           "value": "admin",
           "temporary": false
         }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "splitpay-app",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "fullScopeAllowed": true,
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
       ]
     }
   ]
