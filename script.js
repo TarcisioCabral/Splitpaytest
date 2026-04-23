@@ -1,3 +1,48 @@
+let jwtToken = null;
+
+async function simularLogin() {
+    const btn = document.getElementById('btn-login');
+    btn.innerText = 'Autenticando...';
+    try {
+        const body = new URLSearchParams({
+            client_id: 'splitpay-app',
+            username: 'admin',
+            password: 'admin',
+            grant_type: 'password'
+        });
+        
+        const resp = await fetch('http://localhost:8180/realms/splitpay/protocol/openid-connect/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body
+        });
+        const data = await resp.json();
+        if(data.access_token) {
+            jwtToken = data.access_token;
+            btn.innerText = '✓ Autenticado (Keycloak)';
+            btn.style.background = 'var(--green)';
+            document.getElementById('status-text').innerText = 'ROC: SECURE';
+            document.getElementById('status-dot').style.boxShadow = '0 0 8px var(--green)';
+            document.getElementById('status-dot').style.background = 'var(--green)';
+        } else {
+            alert('Falha na autenticação!');
+            btn.innerText = 'Simular Login Keycloak';
+        }
+    } catch(e) {
+        console.error(e);
+        alert('Erro ao conectar com Keycloak em localhost:8180');
+        btn.innerText = 'Simular Login Keycloak';
+    }
+}
+
+function getAuthHeaders() {
+    if (!jwtToken) {
+        alert('Você não está logado. Por favor, clique em Simular Login antes de prosseguir.');
+        throw new Error("Não autenticado");
+    }
+    return { 'Authorization': 'Bearer ' + jwtToken, 'Content-Type': 'application/json' };
+}
+
 function switchTab(tabId) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -210,7 +255,15 @@ async function nextStep() {
         btnNext.disabled = true;
         btnNext.innerHTML = 'Carregando...';
         try {
-            const resp = await fetch('http://localhost:8081/v1/declaracao/init');
+            const resp = await fetch('http://localhost:8085/v1/declaracao/init', { headers: getAuthHeaders() });
+            if (!resp.ok) {
+                if (resp.status === 503) {
+                    const errorData = await resp.json();
+                    alert("Aviso de Resiliência: " + errorData.message);
+                    return;
+                }
+                throw new Error("Erro na API");
+            }
             const data = await resp.json();
             wizardData.faturamento = data.faturamentoBruto;
             document.getElementById('wdc-faturamento').value = parseFloat(data.faturamentoBruto).toLocaleString('pt-BR', {minimumFractionDigits: 2});
@@ -231,7 +284,8 @@ async function nextStep() {
         loader.style.display = 'block';
         
         try {
-            const resp = await fetch('http://localhost:8081/v1/declaracao/validar', { method: 'POST' });
+            const resp = await fetch('http://localhost:8085/v1/declaracao/validar', { method: 'POST', headers: getAuthHeaders() });
+            if (!resp.ok) throw new Error("Erro na API");
             const data = await resp.json();
             wizardData.creditoAI = data.creditosRecomendados;
             document.getElementById('ai-sug-val').innerText = 'Economia de ' + formatCurrency(data.creditosRecomendados);
@@ -256,9 +310,9 @@ async function nextStep() {
         btnNext.disabled = true;
         btnNext.innerHTML = 'Gerando Resumo...';
         try {
-            const resp = await fetch('http://localhost:8081/v1/declaracao/resumo', {
+            const resp = await fetch('http://localhost:8085/v1/declaracao/resumo', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({
                     faturamentoBruto: wizardData.faturamento,
                     aplicarCreditos: creditsApplied,
