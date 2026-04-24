@@ -21,7 +21,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * que rodaremos os testes em um banco de dados real do PostgreSQL.
  */
 @SpringBootTest(classes = TransactionServiceApplication.class) // Aponta para a classe principal do sistema
-@Testcontainers // Habilita o ciclo de vida do Testcontainers nesta classe de teste
+@org.springframework.test.context.ActiveProfiles("test")
+@Testcontainers(disabledWithoutDocker = true) // Habilita o ciclo de vida do Testcontainers nesta classe de teste e ignora se não houver Docker
 public class TransactionRepositoryIntegrationTest {
 
     // Define o container Docker que será criado e gerado para os testes.
