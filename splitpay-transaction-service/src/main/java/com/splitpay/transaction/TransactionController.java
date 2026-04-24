@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import jakarta.validation.Valid;
+import com.splitpay.transaction.dto.ProcessTransactionRequest;
 
 @RestController
 @RequestMapping("/v1/split")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*") // Allow frontend to call directly for testing
+
 public class TransactionController {
 
     private final TransactionRepository transactionRepository;
@@ -19,12 +21,12 @@ public class TransactionController {
     private final SseNotificationService sseNotificationService;
 
     @PostMapping("/process")
-    public ResponseEntity<?> processTransaction(@RequestBody Map<String, Object> payload) {
-        String nfeKey = (String) payload.get("nfe_key");
-        BigDecimal valorBruto = new BigDecimal(payload.get("valor_bruto").toString());
-        String adquirente = (String) payload.get("adquirente");
-        String segmento = (String) payload.get("segmento");
-        String fase = (String) payload.get("fase");
+    public ResponseEntity<?> processTransaction(@Valid @RequestBody ProcessTransactionRequest payload) {
+        String nfeKey = payload.nfeKey();
+        BigDecimal valorBruto = payload.valorBruto();
+        String adquirente = payload.adquirente();
+        String segmento = payload.segmento();
+        String fase = payload.fase();
 
         // Simple mock calc for IBS / CBS (0.5% each for 2026 phase)
         BigDecimal ibs = valorBruto.multiply(new BigDecimal("0.005"));

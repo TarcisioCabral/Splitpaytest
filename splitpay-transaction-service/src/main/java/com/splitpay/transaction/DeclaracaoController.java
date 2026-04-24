@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import jakarta.validation.Valid;
+import com.splitpay.transaction.dto.GerarResumoRequest;
 
 @RestController
 @RequestMapping("/v1/declaracao")
-@CrossOrigin(origins = "*")
+
 public class DeclaracaoController {
 
     // Simula a obtenção de dados já guardados pelo ROC
@@ -34,10 +36,10 @@ public class DeclaracaoController {
 
     // Calcula o valor final resumido com/sem aplicação dos créditos
     @PostMapping("/resumo")
-    public ResponseEntity<?> gerarResumo(@RequestBody Map<String, Object> payload) {
-        BigDecimal faturamentoBruto = new BigDecimal(payload.getOrDefault("faturamentoBruto", "1250000.00").toString());
-        boolean aplicarCreditos = (Boolean) payload.getOrDefault("aplicarCreditos", false);
-        BigDecimal creditosAplcados = new BigDecimal(payload.getOrDefault("creditosExteriores", "0.00").toString());
+    public ResponseEntity<?> gerarResumo(@Valid @RequestBody GerarResumoRequest payload) {
+        BigDecimal faturamentoBruto = payload.faturamentoBruto() != null ? payload.faturamentoBruto() : new BigDecimal("1250000.00");
+        boolean aplicarCreditos = payload.aplicarCreditos() != null ? payload.aplicarCreditos() : false;
+        BigDecimal creditosAplcados = payload.creditosExteriores() != null ? payload.creditosExteriores() : new BigDecimal("0.00");
 
         // Tributação Mensal presumida para o exemplo: IBS ~8.8% e CBS ~14.5% 
         BigDecimal ibs = faturamentoBruto.multiply(new BigDecimal("0.088")).setScale(2, RoundingMode.HALF_UP);

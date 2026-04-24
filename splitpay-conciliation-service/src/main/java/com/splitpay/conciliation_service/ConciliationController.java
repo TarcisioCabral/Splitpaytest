@@ -8,7 +8,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/conciliacao")
-@CrossOrigin(origins = "*")
+
 public class ConciliationController {
 
     @GetMapping("/{nfeKey}")

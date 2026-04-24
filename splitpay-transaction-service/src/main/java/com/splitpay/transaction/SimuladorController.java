@@ -8,21 +8,23 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Map;
+import jakarta.validation.Valid;
+import com.splitpay.transaction.dto.CalcularMargemRequest;
 
 @RestController
 @RequestMapping("/v1/simulador")
-@CrossOrigin(origins = "*")
+
 public class SimuladorController {
 
     @Autowired
     private IvaDualTaxService ivaDualTaxService;
 
     @PostMapping("/margem")
-    public ResponseEntity<?> calcularMargem(@RequestBody Map<String, Object> payload) {
-        BigDecimal precoAtual = new BigDecimal(payload.get("preco_atual").toString());
-        BigDecimal custo = new BigDecimal(payload.get("custo").toString());
-        String faseAlvo = (String) payload.getOrDefault("fase_alvo", "2029_pleno");
-        String segmento = (String) payload.getOrDefault("segmento", "geral");
+    public ResponseEntity<?> calcularMargem(@Valid @RequestBody CalcularMargemRequest payload) {
+        BigDecimal precoAtual = payload.precoAtual();
+        BigDecimal custo = payload.custo();
+        String faseAlvo = payload.faseAlvo() != null ? payload.faseAlvo() : "2029_pleno";
+        String segmento = payload.segmento() != null ? payload.segmento() : "geral";
 
         Map<String, BigDecimal> rates = ivaDualTaxService.calculateRates(segmento, faseAlvo);
         BigDecimal aliquota = rates.get("total");

@@ -10,7 +10,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/v1/aliquotas")
-@CrossOrigin(origins = "*")
+
 public class AliquotaController {
 
     @Autowired
