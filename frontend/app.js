@@ -50,9 +50,8 @@ window.switchTab = async (tabId, element) => {
 
     const appContent = document.getElementById('app-content');
     
-    // Add simple fade animation
-    appContent.style.opacity = '0';
-    appContent.style.transform = 'translateY(10px)';
+    // Add Animate.css entrance animation
+    appContent.className = 'content animate__animated animate__fadeInUp animate__faster';
 
     try {
         // 2. Fetch component HTML
@@ -82,9 +81,9 @@ window.switchTab = async (tabId, element) => {
         console.error("Error loading component:", e);
         appContent.innerHTML = `<h2>Erro ao carregar módulo ${tabId}</h2>`;
     } finally {
-        // Restore opacity for fade-in effect
-        appContent.style.transition = 'all 0.3s ease';
-        appContent.style.opacity = '1';
-        appContent.style.transform = 'translateY(0)';
+        // Reset animation class after completion to allow re-triggering
+        setTimeout(() => {
+            appContent.classList.remove('animate__fadeInUp');
+        }, 500);
     }
 };

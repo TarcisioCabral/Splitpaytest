@@ -1,9 +1,9 @@
 /* Conciliacao Specific Styles */
 .match-item {
-    background: rgba(0,0,0,0.2); 
-    border: 1px solid rgba(255,255,255,0.08); 
+    background: var(--surface2); 
+    border: 1px solid var(--border); 
     padding: 1rem; 
-    border-radius: 8px; 
+    border-radius: 10px; 
     margin-bottom: 1rem; 
     display: flex; 
     justify-content: space-between; 
@@ -11,11 +11,12 @@
 }
 .match-nfe {
     font-family: var(--mono); 
-    color: #60a5fa; 
+    color: var(--primary-light); 
+    font-weight: 600;
     margin-bottom: 4px;
 }
 .match-details {
-    font-size: 12px; 
+    font-size: 13px; 
     color: var(--text2);
 }
 .match-status {

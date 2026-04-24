@@ -36,8 +36,9 @@
     margin-bottom: 4px;
 }
 .tl-event {
-    font-weight: 600;
-    font-size: 13px;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 14px;
     margin-bottom: 4px;
 }
 .tl-desc {

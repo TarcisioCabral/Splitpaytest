@@ -1,0 +1,61 @@
+<div class="page-container centered-focus">
+    <div class="card observability-card">
+        <div class="card-header">
+            <div class="title-group">
+                <span class="icon">📊</span>
+                <h2>Painel de Observabilidade (Back-office)</h2>
+            </div>
+            <div class="live-status">
+                <span class="pulse-dot"></span>
+                MONITORAMENTO ATIVO
+            </div>
+        </div>
+
+        <div class="metrics-grid">
+            <!-- Fila RabbitMQ -->
+            <div class="metric-box">
+                <div class="metric-info">
+                    <span class="label">Mensagens em Fila</span>
+                    <span class="value" id="obs-queue-size">0</span>
+                </div>
+                <div class="metric-chart-mini" id="mini-queue-chart"></div>
+            </div>
+
+            <!-- Tempo de Conciliação -->
+            <div class="metric-box">
+                <div class="metric-info">
+                    <span class="label">Tempo Médio de Conciliação</span>
+                    <span class="value"><span id="obs-avg-time">0</span>ms</span>
+                </div>
+                <div class="metric-chart-mini" id="mini-time-chart"></div>
+            </div>
+
+            <!-- Taxa de Erro -->
+            <div class="metric-box">
+                <div class="metric-info">
+                    <span class="label">Taxa de Erro (24h)</span>
+                    <span class="value" id="obs-error-rate">0.00%</span>
+                </div>
+                <div class="status-indicator healthy" id="obs-error-status">OPERANTE</div>
+            </div>
+        </div>
+
+        <div class="main-chart-container">
+            <div class="chart-header">
+                <h3>Volume de Transações (Mensagens/Segundo)</h3>
+                <p>Dados de telemetria processados via D3.js em tempo real.</p>
+            </div>
+            <div id="d3-tps-chart" class="d3-container"></div>
+        </div>
+
+        <div class="system-logs">
+            <div class="log-header">Log de Eventos do Sistema</div>
+            <div class="log-viewer" id="obs-logs">
+                <div class="log-entry" style="display:flex; gap:10px; align-items:center;"><span class="badge badge-info">SYSTEM</span> <span style="flex:1;">Inicializando monitoramento...</span> <span class="badge badge-neutral">127.0.0.1</span></div>
+                <div class="log-entry" style="display:flex; gap:10px; align-items:center;"><span class="badge badge-success">GATEWAY</span> <span style="flex:1;">Conexão estabelecida com sucesso.</span> <span class="badge badge-neutral">192.168.1.10</span></div>
+                <div class="log-entry" style="display:flex; gap:10px; align-items:center;"><span class="badge badge-warning">RABBITMQ</span> <span style="flex:1;">Fila de conciliação aguardando consumidores.</span> <span class="badge badge-neutral">10.0.0.5</span></div>
+                <div class="log-entry" style="display:flex; gap:10px; align-items:center;"><span class="badge badge-error">DB</span> <span style="flex:1;">Timeout na conexão com PostgreSQL. Re-tentando...</span> <span class="badge badge-neutral">10.0.0.6</span></div>
+            </div>
+        </div>
+    </div>
+</div>

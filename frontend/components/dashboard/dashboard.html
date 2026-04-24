@@ -28,29 +28,51 @@
 
 <div class="three-col">
   <div class="card">
-    <div class="card-title">Fluxo Split Payment — ciclo de vida <span class="card-badge badge-live">LIVE</span></div>
+    <div class="card-title">Fluxo Split Payment — ciclo de vida <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
     <div style="display:flex; justify-content:center; padding: 20px 0;">
        <div style="font-size: 11px; color: var(--text3); text-align: center;">Checkout → SplitPay IVA (Middleware) → Adquirente → ROC</div>
     </div>
   </div>
   <div class="card">
     <div class="card-title">Alíquotas vigentes</div>
-    <div class="aliq-grid">
-      <div class="aliq-item"><div class="aliq-name">IBS</div><div class="aliq-val" style="color:var(--primary)">0.5%</div><div class="aliq-phase">Teste 2026</div></div>
-      <div class="aliq-item"><div class="aliq-name">CBS</div><div class="aliq-val" style="color:var(--secondary)">0.5%</div><div class="aliq-phase">Teste 2026</div></div>
+    <div class="icon-card-grid">
+      <div class="icon-card">
+        <div class="icon-card-icon" style="color: var(--primary)">🏛️</div>
+        <div class="icon-card-content">
+          <div class="icon-card-title">IBS</div>
+          <div class="icon-card-desc"><span class="badge badge-info" style="font-size: 13px;">0.5%</span> <span class="badge badge-neutral">Teste 2026</span></div>
+        </div>
+      </div>
+      <div class="icon-card">
+        <div class="icon-card-icon" style="color: var(--secondary)">🏢</div>
+        <div class="icon-card-content">
+          <div class="icon-card-title">CBS</div>
+          <div class="icon-card-desc"><span class="badge badge-info" style="font-size: 13px;">0.5%</span> <span class="badge badge-neutral">Teste 2026</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="card">
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <div class="card-title">Últimas transações processadas <span class="card-badge badge-live">LIVE</span></div>
-    <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:500;">Simular Envio NF-e</button>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+    <div class="card-title" style="margin-bottom: 0;">Últimas transações processadas <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
+    <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-play"></i> Simular Envio NF-e</button>
   </div>
-  <table class="tx-table">
+  <table class="tx-table table-minimalist">
     <thead>
       <tr><th>Chave NF-e</th><th>Valor Bruto</th><th>IBS retido</th><th>CBS retido</th><th>Adquirente</th><th>Status</th><th>Timestamp</th></tr>
     </thead>
     <tbody id="tx-body"></tbody>
   </table>
+  <div class="pagination-container">
+    <div class="pagination-info">Mostrando transações recentes</div>
+    <div class="pagination-controls">
+        <button class="page-btn" disabled>&lt;</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">&gt;</button>
+    </div>
+  </div>
 </div>

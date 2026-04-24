@@ -17,7 +17,7 @@ function loadMatches() {
                     <div class="match-details">Valor: R$ 850.00 | Retenção calculada: R$ 8.50</div>
                 </div>
                 <div class="match-status">
-                    <span class="match-badge">Match Exato</span>
+                    <span class="badge badge-success">Match Exato</span>
                     <div class="match-time">Recebido da Adquirente há 2s</div>
                 </div>
             </div>

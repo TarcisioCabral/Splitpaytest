@@ -7,9 +7,11 @@
     border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 13px; font-family: var(--mono); outline: none; 
 }
 .sim-btn { 
-    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-    color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: var(--font-main);
+    background: var(--primary); 
+    color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; font-family: var(--font-heading);
+    transition: background 0.2s;
 }
+.sim-btn:hover { background: var(--secondary); }
 
 .sim-result-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
 .sim-result-row:last-child { border-bottom: none; }

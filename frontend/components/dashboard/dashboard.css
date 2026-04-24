@@ -29,13 +29,15 @@
     border: 1px solid var(--border);
 }
 .aliq-name {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 13px;
+    font-family: var(--font-heading);
 }
 .aliq-val {
     font-size: 18px;
     font-weight: 700;
-    font-family: var(--mono);
+    font-family: var(--font-heading);
+    letter-spacing: -0.5px;
 }
 .aliq-phase {
     font-size: 11px;

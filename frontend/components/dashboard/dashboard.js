@@ -25,13 +25,13 @@ async function simulateNfeTransaction() {
     const tr = document.createElement('tr');
     tr.id = `tx-${nfeKey}`;
     tr.innerHTML = `
-        <td style="color:#60a5fa">${nfeKey}</td>
+        <td style="color:var(--primary-light)">${nfeKey}</td>
         <td>R$ ${val}</td>
         <td>-</td>
         <td>-</td>
         <td>Teste Adq.</td>
-        <td id="status-${nfeKey}"><span style="color:#fbbf24; background:rgba(251,191,36,0.1); padding:2px 6px; border-radius:4px; font-size:12px;"><i class="fa-solid fa-circle-notch fa-spin"></i> Processando...</span></td>
-        <td style="color:#64748b; font-size: 11px;">Agora</td>
+        <td id="status-${nfeKey}"><span class="badge badge-warning"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:4px;"></i> Processando...</span></td>
+        <td style="color:var(--text3); font-size: 11px;">Agora</td>
     `;
     tbody.prepend(tr);
 
@@ -58,7 +58,7 @@ async function simulateNfeTransaction() {
             // Update UI to success
             const statusCell = document.getElementById(`status-${nfeKey}`);
             if (statusCell) {
-                statusCell.innerHTML = `<span class="badge-live" style="background:rgba(34,197,94,0.1); color:#22c55e;">ROC Concluído</span>`;
+                statusCell.innerHTML = `<span class="badge badge-success">ROC Concluído</span>`;
             }
             
             // Close connection
@@ -78,7 +78,7 @@ async function simulateNfeTransaction() {
         console.error("Failed to simulate NFe:", e);
         const statusCell = document.getElementById(`status-${nfeKey}`);
         if (statusCell) {
-            statusCell.innerHTML = `<span style="color:red;">Erro</span>`;
+            statusCell.innerHTML = `<span class="badge badge-error">Erro</span>`;
         }
     }
 }
@@ -97,20 +97,20 @@ function loadTransactions() {
         const adq = adquirentes[Math.floor(Math.random() * adquirentes.length)];
         const key = '35260312...' + Math.floor(Math.random() * 9000 + 1000);
         
-        let statusHtml = `<span class="badge-live">ROC Concluído</span>`;
+        let statusHtml = `<span class="badge badge-success">ROC Concluído</span>`;
         if (Math.random() > 0.8) {
-            statusHtml = `<span style="color:#fbbf24; background:rgba(251,191,36,0.1); padding:2px 6px; border-radius:4px; font-size:12px;">Pendente</span>`;
+            statusHtml = `<span class="badge badge-warning">Pendente</span>`;
         }
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td style="color:#60a5fa">${key}</td>
+            <td style="color:var(--primary-light)">${key}</td>
             <td>R$ ${val}</td>
             <td>R$ ${ibs}</td>
             <td>R$ ${cbs}</td>
             <td>${adq}</td>
             <td>${statusHtml}</td>
-            <td style="color:#64748b; font-size: 11px;">Agora</td>
+            <td style="color:var(--text3); font-size: 11px;">Agora</td>
         `;
         tbody.appendChild(tr);
     }
