@@ -4,90 +4,117 @@
   <title>Roadmap | SplitPay IVA</title>
 </head>
 <body>
-<section>
-  <div class="two-col">
-    <div class="card">
-      <div class="card-title">Roadmap de implementação</div>
+<section class="animate-up">
+  <!-- Hero Section -->
+  <div style="margin-bottom: var(--space-6);">
+    <h1 style="font-family: var(--font-heading); font-size: 28px; margin-bottom: var(--space-2); color: var(--text);">Jornada para o IVA Dual Pleno</h1>
+    <p style="color: var(--text2); font-size: 15px; max-width: 600px; line-height: 1.5;">Acompanhe o cronograma oficial de implementação do Split Payment e nossa evolução técnica para atender à reforma tributária brasileira.</p>
+  </div>
+
+  <div class="two-col" style="align-items: start;">
+    <!-- Timeline Card -->
+    <div class="card" style="padding: var(--space-6);">
+      <div class="card-title" style="font-size: 16px;">Cronograma de Implementação</div>
       <div class="timeline">
+        
         <div class="tl-item">
           <div class="tl-dot green"></div>
-          <div class="tl-date">Jan 2026</div>
-          <div class="tl-event">Fase de Testes — 1% IVA Dual</div>
-          <div class="tl-desc">Split Payment obrigatório com alíquota reduzida. ROC em produção.</div>
+          <div class="tl-header">
+            <div class="tl-event">Fase de Testes — 1% IVA Dual</div>
+            <div class="tl-date">Jan 2026</div>
+          </div>
+          <div class="tl-desc">Split Payment obrigatório com alíquota reduzida. Sistema em produção com conciliação básica (ROC).</div>
         </div>
+
         <div class="tl-item">
           <div class="tl-dot green"></div>
-          <div class="tl-date">Mar 2026</div>
-          <div class="tl-event">Middleware v1.0-beta</div>
-          <div class="tl-desc">Conciliação em tempo real, API pública, integração Cielo/Stone.</div>
+          <div class="tl-header">
+            <div class="tl-event">Middleware v1.0-beta</div>
+            <div class="tl-date">Mar 2026</div>
+          </div>
+          <div class="tl-desc">Integração avançada com Cielo/Stone. Lançamento da API pública e conciliação de eventos em tempo real.</div>
         </div>
+
         <div class="tl-item">
           <div class="tl-dot amber"></div>
-          <div class="tl-date">Jul 2026</div>
-          <div class="tl-event">Suporte a Marketplaces</div>
-          <div class="tl-desc">Split multipartes, comissões, repasse automático com NF-e por seller.</div>
+          <div class="tl-header">
+            <div class="tl-event">Suporte a Marketplaces</div>
+            <div class="tl-date">Jul 2026</div>
+          </div>
+          <div class="tl-desc">Split multipartes avançado, gestão de comissões e repasse automático garantido com NF-e por seller.</div>
         </div>
+
         <div class="tl-item">
           <div class="tl-dot amber"></div>
-          <div class="tl-date">Jan 2027</div>
-          <div class="tl-event">CBS pleno (~9–13.5%)</div>
-          <div class="tl-desc">Atualização automática de alíquotas via cache Redis. Simulador atualizado.</div>
+          <div class="tl-header">
+            <div class="tl-event">CBS pleno (~9–13.5%)</div>
+            <div class="tl-date">Jan 2027</div>
+          </div>
+          <div class="tl-desc">Atualização automática e dinâmica de alíquotas via cache Redis. Refatoração completa do motor do simulador.</div>
         </div>
-        <div class="tl-item">
+
+        <div class="tl-item" style="border-style: dashed; background: transparent; box-shadow: none;">
           <div class="tl-dot gray"></div>
-          <div class="tl-date">2029</div>
-          <div class="tl-event">IVA Dual pleno (IBS + CBS ≈ 27%)</div>
-          <div class="tl-desc">Substituição completa de PIS/COFINS/ISS/ICMS. Middleware crítico.</div>
+          <div class="tl-header">
+            <div class="tl-event" style="color: var(--text3);">IVA Dual pleno (IBS + CBS ≈ 27%)</div>
+            <div class="tl-date" style="background: rgba(120, 113, 108, 0.1); color: var(--text3);">2029</div>
+          </div>
+          <div class="tl-desc" style="color: var(--text3);">Substituição completa e definitiva de PIS/COFINS/ISS/ICMS. O middleware se torna infraestrutura crítica do ecossistema.</div>
         </div>
+
       </div>
     </div>
-    <div class="card">
-      <div class="card-title">Stack técnica</div>
-      <div style="display:grid;gap:10px">
-        <div class="aliq-item" style="text-align:left;display:flex;align-items:center;gap:12px">
-          <div style="font-size:22px">⚙️</div>
-          <div>
-            <div class="aliq-name" style="margin:0 0 2px">Runtime</div>
-            <div style="font-size:13px;font-family:var(--mono);color:var(--primary)">Node.js / Go / Java</div>
-            <div style="font-size:10px;color:var(--text3)">Alta concorrência de transações</div>
+
+    <!-- Tech Stack Card -->
+    <div class="card" style="padding: var(--space-6); position: sticky; top: 100px;">
+      <div class="card-title" style="font-size: 16px;">Nossa Stack Tecnológica</div>
+      <p style="color: var(--text3); font-size: 13px; margin-bottom: var(--space-4);">Infraestrutura resiliente preparada para alta volumetria transacional do Split Payment.</p>
+      
+      <div class="icon-card-grid" style="grid-template-columns: 1fr; margin-top: 0;">
+        
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--text); background: rgba(255,255,255,0.1);">⚙️</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">Runtime (Java Spring)</div>
+            <div class="icon-card-desc" style="line-height: 1.4;">Alta concorrência de transações e regras de negócio complexas.</div>
           </div>
         </div>
-        <div class="aliq-item" style="text-align:left;display:flex;align-items:center;gap:12px">
-          <div style="font-size:22px">🗄️</div>
-          <div>
-            <div class="aliq-name" style="margin:0 0 2px">Database</div>
-            <div style="font-size:13px;font-family:var(--mono);color:var(--green2)">PostgreSQL</div>
-            <div style="font-size:10px;color:var(--text3)">Integridade referencial NF-e × Split</div>
+
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--green2); background: rgba(52,211,153,0.1);">🗄️</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">PostgreSQL</div>
+            <div class="icon-card-desc" style="line-height: 1.4;">Integridade referencial robusta (NF-e × Split).</div>
           </div>
         </div>
-        <div class="aliq-item" style="text-align:left;display:flex;align-items:center;gap:12px">
-          <div style="font-size:22px">⚡</div>
-          <div>
-            <div class="aliq-name" style="margin:0 0 2px">Cache</div>
-            <div style="font-size:13px;font-family:var(--mono);color:var(--red2)">Redis</div>
-            <div style="font-size:10px;color:var(--text3)">Cache de alíquotas + fila de events</div>
+
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--red2); background: rgba(248,113,113,0.1);">⚡</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">Redis</div>
+            <div class="icon-card-desc" style="line-height: 1.4;">Cache ultra-rápido de alíquotas IBS/CBS dinâmicas.</div>
           </div>
         </div>
-        <div class="aliq-item" style="text-align:left;display:flex;align-items:center;gap:12px">
-          <div style="font-size:22px">🔐</div>
-          <div>
-            <div class="aliq-name" style="margin:0 0 2px">Segurança</div>
-            <div style="font-size:13px;font-family:var(--mono);color:var(--amber2)">Keycloak / OAuth2</div>
-            <div style="font-size:10px;color:var(--text3)">Autenticação de usuários e serviços</div>
+
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--amber2); background: rgba(251,191,36,0.1);">🔐</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">Keycloak OAuth2</div>
+            <div class="icon-card-desc" style="line-height: 1.4;">Segurança Enterprise e autenticação JWT para microsserviços.</div>
           </div>
         </div>
-        <div class="aliq-item" style="text-align:left;display:flex;align-items:center;gap:12px">
-          <div style="font-size:22px">📡</div>
-          <div>
-            <div class="aliq-name" style="margin:0 0 2px">Mensageria</div>
-            <div style="font-size:13px;font-family:var(--mono);color:var(--secondary)">RabbitMQ</div>
-            <div style="font-size:10px;color:var(--text3)">Comunicação assíncrona orientada a eventos</div>
+
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--secondary); background: rgba(16,185,129,0.1);">📡</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">RabbitMQ</div>
+            <div class="icon-card-desc" style="line-height: 1.4;">Mensageria assíncrona tolerante a falhas (Event-driven).</div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
-  <!-- Roadmap usually doesn't have custom JS, but keeping pattern if needed -->
 </section>
 </body>
 </html>

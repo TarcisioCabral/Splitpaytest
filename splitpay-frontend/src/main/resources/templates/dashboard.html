@@ -64,7 +64,7 @@
   <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
       <div class="card-title" style="margin-bottom: 0;">Últimas transações processadas <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
-      <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-play"></i> Simular Envio NF-e</button>
+      <div th:replace="~{fragments/button :: button(id='btn-simulate-nfe', text='Simular Envio NF-e', icon='fa-solid fa-play', cssClass='btn-primary', type='button')}"></div>
     </div>
     <table class="tx-table table-minimalist">
       <thead>

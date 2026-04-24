@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <!-- 
+        Button Fragment
+        Usage: <div th:replace="~{fragments/button :: button(id='my-btn', text='Click Me', icon='fa-solid fa-play', cssClass='btn-primary', type='button')}"></div>
+    -->
+    <th:block th:fragment="button(id, text, icon, cssClass, type)">
+        <button th:id="${id}" th:class="${'btn ' + (cssClass != null ? cssClass : 'btn-primary')}" th:type="${type != null ? type : 'button'}">
+            <i th:if="${icon != null}" th:class="${icon}"></i>
+            <span th:text="${text}"></span>
+        </button>
+    </th:block>
+</body>
+</html>

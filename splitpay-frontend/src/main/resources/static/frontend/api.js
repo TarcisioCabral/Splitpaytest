@@ -75,3 +75,12 @@ export async function processSplit(data) {
     });
     return await resp.json();
 }
+
+export async function downloadGuiaPDF(headers) {
+    const resp = await fetch(`${CONFIG.GATEWAY}/v1/declaracao/download`, {
+        method: 'GET',
+        headers
+    });
+    if (!resp.ok) throw new Error('Erro ao baixar PDF');
+    return await resp.blob();
+}
