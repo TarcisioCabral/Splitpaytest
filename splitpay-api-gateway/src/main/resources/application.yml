@@ -9,7 +9,7 @@ spring:
       mvc:
         routes:
           - id: transaction-service-route
-            uri: http://localhost:8081
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
             predicates:
               - Path=/v1/declaracao/**
             filters:
@@ -18,7 +18,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/splitpay
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/splitpay}
 
 management:
   endpoints:

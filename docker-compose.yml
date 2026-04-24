@@ -1,6 +1,19 @@
-version: '3.8'
+
+# ─── Shared network ────────────────────────────────────────────────────────────
+networks:
+  splitpay-network:
+    driver: bridge
+
+# ─── Shared healthcheck defaults ──────────────────────────────────────────────
+x-healthcheck-defaults: &healthcheck-defaults
+  interval: 15s
+  timeout: 5s
+  retries: 5
+  start_period: 30s
 
 services:
+
+  # ── Infrastructure ────────────────────────────────────────────────────────────
   db:
     image: postgres:16-alpine
     container_name: splitpay-postgres
@@ -13,6 +26,11 @@ services:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d splitpay"]
+    networks:
+      - splitpay-network
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -24,6 +42,11 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+    networks:
+      - splitpay-network
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.4
@@ -38,6 +61,104 @@ services:
       - "8180:8080"
     volumes:
       - ./keycloak:/opt/keycloak/data/import
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/master || exit 1"]
+    networks:
+      - splitpay-network
+
+  # ── Microservices ─────────────────────────────────────────────────────────────
+  transaction-service:
+    build:
+      context: .
+      dockerfile: splitpay-transaction-service/Dockerfile
+    container_name: splitpay-transaction-service
+    restart: on-failure
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/splitpay
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_PASS: ${RABBITMQ_DEFAULT_PASS}
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+    networks:
+      - splitpay-network
+
+  conciliation-service:
+    build:
+      context: .
+      dockerfile: splitpay-conciliation-service/Dockerfile
+    container_name: splitpay-conciliation-service
+    restart: on-failure
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/splitpay
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_PASS: ${RABBITMQ_DEFAULT_PASS}
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+    networks:
+      - splitpay-network
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: splitpay-api-gateway/Dockerfile
+    container_name: splitpay-api-gateway
+    restart: on-failure
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      TRANSACTION_SERVICE_URL: http://transaction-service:8081
+      KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/splitpay
+    depends_on:
+      transaction-service:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - splitpay-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: splitpay-frontend/Dockerfile
+    container_name: splitpay-frontend
+    restart: on-failure
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - splitpay-network
 
 volumes:
   pgdata:

@@ -1,0 +1,27 @@
+# Maven build output
+**/target/
+**/.classpath
+**/.project
+**/.settings/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Logs
+**/*.log
+
+# Docker files themselves (avoid recursive copy)
+**/Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Test coverage reports
+**/jacoco/
+**/surefire-reports/
