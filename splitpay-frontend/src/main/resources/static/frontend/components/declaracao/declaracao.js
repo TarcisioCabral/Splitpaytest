@@ -6,7 +6,7 @@ import { initDeclaracao, validarDeclaracao, getResumoDeclaracao } from '../../ap
 
 const totalSteps = 5;
 
-export function init() {
+function init() {
     updateState('ui.wizardStep', 1);
     updateWizardUI();
 
@@ -177,3 +177,4 @@ function formatCurrency(val) {
     if (!val) return 'R$ 0,00';
     return 'R$ ' + parseFloat(val).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+init();

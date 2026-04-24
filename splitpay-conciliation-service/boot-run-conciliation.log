@@ -1,0 +1,116 @@
+[[1;34mINFO[m] Scanning for projects...
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m-----------------< [0;36mcom.splitpay:conciliation-service[0;1m >------------------[m
+[[1;34mINFO[m] [1mBuilding  0.0.1-SNAPSHOT[m
+[[1;34mINFO[m] [1m--------------------------------[ jar ]---------------------------------[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m>>> [0;32mspring-boot-maven-plugin:4.0.5:run[m [1m(default-cli)[0;1m > [0;1mtest-compile[m @ [36mconciliation-service[0;1m >>>[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:3.3.1:resources[m [1m(default-resources)[m @ [36mconciliation-service[0;1m ---[m
+[[1;34mINFO[m] Copying 1 resource from src/main/resources to target/classes
+[[1;34mINFO[m] Copying 0 resource from src/main/resources to target/classes
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.14.1:compile[m [1m(default-compile)[m @ [36mconciliation-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-resources-plugin:3.3.1:testResources[m [1m(default-testResources)[m @ [36mconciliation-service[0;1m ---[m
+[[1;34mINFO[m] skip non existing resourceDirectory /home/tarcisiocabral/Documentos/Tarcisio Cabral/Splitpaytest/splitpay-conciliation-service/src/test/resources
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mmaven-compiler-plugin:3.14.1:testCompile[m [1m(default-testCompile)[m @ [36mconciliation-service[0;1m ---[m
+[[1;34mINFO[m] Nothing to compile - all classes are up to date.
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m<<< [0;32mspring-boot-maven-plugin:4.0.5:run[m [1m(default-cli)[0;1m < [0;1mtest-compile[m @ [36mconciliation-service[0;1m <<<[m
+[[1;34mINFO[m] 
+[[1;34mINFO[m] 
+[[1;34mINFO[m] [1m--- [0;32mspring-boot-maven-plugin:4.0.5:run[m [1m(default-cli)[m @ [36mconciliation-service[0;1m ---[m
+[[1;34mINFO[m] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.5)
+
+2026-04-23T00:46:32.275-03:00  INFO 152919 --- [conciliation-service] [           main] c.s.c.ConciliationServiceApplication     : Starting ConciliationServiceApplication using Java 21.0.10 with PID 152919 (/home/tarcisiocabral/Documentos/Tarcisio Cabral/Splitpaytest/splitpay-conciliation-service/target/classes started by tarcisiocabral in /home/tarcisiocabral/Documentos/Tarcisio Cabral/Splitpaytest/splitpay-conciliation-service)
+2026-04-23T00:46:32.279-03:00  INFO 152919 --- [conciliation-service] [           main] c.s.c.ConciliationServiceApplication     : No active profile set, falling back to 1 default profile: "default"
+2026-04-23T00:46:32.935-03:00  INFO 152919 --- [conciliation-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-23T00:46:32.955-03:00  INFO 152919 --- [conciliation-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 11 ms. Found 0 JPA repository interfaces.
+2026-04-23T00:46:33.461-03:00  INFO 152919 --- [conciliation-service] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat initialized with port 8082 (http)
+2026-04-23T00:46:33.476-03:00  INFO 152919 --- [conciliation-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-23T00:46:33.476-03:00  INFO 152919 --- [conciliation-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/11.0.20]
+2026-04-23T00:46:33.520-03:00  INFO 152919 --- [conciliation-service] [           main] b.w.c.s.WebApplicationContextInitializer : Root WebApplicationContext: initialization completed in 1180 ms
+2026-04-23T00:46:33.684-03:00  INFO 152919 --- [conciliation-service] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-04-23T00:46:33.731-03:00  INFO 152919 --- [conciliation-service] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-04-23T00:46:34.217-03:00  INFO 152919 --- [conciliation-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-23T00:46:34.248-03:00  INFO 152919 --- [conciliation-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-23T00:46:34.404-03:00  INFO 152919 --- [conciliation-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@61c5fd78
+2026-04-23T00:46:34.406-03:00  INFO 152919 --- [conciliation-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-23T00:46:34.437-03:00  WARN 152919 --- [conciliation-service] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-23T00:46:34.461-03:00  INFO 152919 --- [conciliation-service] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/splitpay]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 16.13
+	Default catalog/schema: splitpay/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-04-23T00:46:34.972-03:00  INFO 152919 --- [conciliation-service] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-23T00:46:34.980-03:00  INFO 152919 --- [conciliation-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-23T00:46:35.304-03:00  WARN 152919 --- [conciliation-service] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-23T00:46:35.721-03:00  INFO 152919 --- [conciliation-service] [           main] o.s.boot.tomcat.TomcatWebServer          : Tomcat started on port 8082 (http) with context path '/'
+2026-04-23T00:46:35.725-03:00  INFO 152919 --- [conciliation-service] [           main] o.s.a.r.c.CachingConnectionFactory       : Attempting to connect to: [localhost:5672]
+2026-04-23T00:46:35.780-03:00  INFO 152919 --- [conciliation-service] [           main] o.s.a.r.c.CachingConnectionFactory       : Created new connection: rabbitConnectionFactory#2634d000:0/SimpleConnection@3d01b609 [delegate=amqp://guest@127.0.0.1:5672/, localPort=55296]
+2026-04-23T00:46:35.832-03:00  INFO 152919 --- [conciliation-service] [           main] c.s.c.ConciliationServiceApplication     : Started ConciliationServiceApplication in 3.991 seconds (process running for 4.391)
+2026-04-23T00:47:13.756-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {fase=2026, cbs_retido=4.99245, timestamp=2026-04-23T00:47:13.547538298, adquirente=Teste Adq., ibs_retido=4.99245, transaction_id=1, liquido=988.5051, valor_bruto=998.49, nfe_key=35260312...21274, segmento=VAREJO}
+2026-04-23T00:47:13.756-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...21274, Valor Bruto: 998.49
+2026-04-23T00:47:14.756-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...21274
+2026-04-23T00:51:59.636-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=3.50785, timestamp=2026-04-23T00:51:59.500902971, adquirente=Teste Adq., ibs_retido=3.50785, transaction_id=2, liquido=694.5543, valor_bruto=701.57, nfe_key=35260312...55937, segmento=VAREJO, fase=2026}
+2026-04-23T00:51:59.638-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...55937, Valor Bruto: 701.57
+2026-04-23T00:52:00.639-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...55937
+2026-04-23T00:52:56.461-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=24.305, timestamp=2026-04-23T00:52:56.437700191, adquirente=Teste Adq., ibs_retido=24.305, transaction_id=3, liquido=4812.39, valor_bruto=4861, nfe_key=35260312...74606, segmento=VAREJO, fase=2026}
+2026-04-23T00:52:56.462-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...74606, Valor Bruto: 4861
+2026-04-23T00:52:57.462-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...74606
+2026-04-23T00:53:12.051-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=7.17915, timestamp=2026-04-23T00:53:12.036574800, adquirente=Teste Adq., ibs_retido=7.17915, transaction_id=4, liquido=1421.4717, valor_bruto=1435.83, nfe_key=35260312...52239, segmento=VAREJO, fase=2026}
+2026-04-23T00:53:12.051-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...52239, Valor Bruto: 1435.83
+2026-04-23T00:53:13.052-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...52239
+2026-04-23T00:54:08.761-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=7.2557, timestamp=2026-04-23T00:54:08.747586598, adquirente=Teste Adq., ibs_retido=7.2557, transaction_id=5, liquido=1436.6286, valor_bruto=1451.14, nfe_key=35260312...64051, segmento=VAREJO, fase=2026}
+2026-04-23T00:54:08.761-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...64051, Valor Bruto: 1451.14
+2026-04-23T00:54:09.762-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...64051
+2026-04-23T00:56:38.385-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=22.626, timestamp=2026-04-23T00:56:38.343193239, adquirente=Teste Adq., ibs_retido=22.626, transaction_id=6, liquido=4479.948, valor_bruto=4525.2, nfe_key=35260312...62706, segmento=VAREJO, fase=2026}
+2026-04-23T00:56:38.388-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...62706, Valor Bruto: 4525.2
+2026-04-23T00:56:39.389-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...62706
+2026-04-23T00:56:50.723-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=24.5161, timestamp=2026-04-23T00:56:50.709954846, adquirente=Teste Adq., ibs_retido=24.5161, transaction_id=7, liquido=4854.1878, valor_bruto=4903.22, nfe_key=35260312...39870, segmento=VAREJO, fase=2026}
+2026-04-23T00:56:50.724-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...39870, Valor Bruto: 4903.22
+2026-04-23T00:56:51.724-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...39870
+2026-04-23T00:56:52.221-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=13.8934, timestamp=2026-04-23T00:56:52.209375137, adquirente=Teste Adq., ibs_retido=13.8934, transaction_id=8, liquido=2750.8932, valor_bruto=2778.68, nfe_key=35260312...85348, segmento=VAREJO, fase=2026}
+2026-04-23T00:56:52.222-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...85348, Valor Bruto: 2778.68
+2026-04-23T00:56:53.222-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...85348
+2026-04-23T00:56:53.225-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=4.10835, timestamp=2026-04-23T00:56:52.959598362, adquirente=Teste Adq., ibs_retido=4.10835, transaction_id=9, liquido=813.4533, valor_bruto=821.67, nfe_key=35260312...27455, segmento=VAREJO, fase=2026}
+2026-04-23T00:56:53.225-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...27455, Valor Bruto: 821.67
+2026-04-23T00:56:54.225-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...27455
+2026-04-23T00:57:14.593-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=7.3205, timestamp=2026-04-23T00:57:14.580329257, adquirente=Teste Adq., ibs_retido=7.3205, transaction_id=10, liquido=1449.459, valor_bruto=1464.1, nfe_key=35260312...72676, segmento=VAREJO, fase=2026}
+2026-04-23T00:57:14.594-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...72676, Valor Bruto: 1464.1
+2026-04-23T00:57:15.594-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...72676
+2026-04-23T00:59:42.712-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=22.28365, timestamp=2026-04-23T00:59:42.698951243, adquirente=Teste Adq., ibs_retido=22.28365, transaction_id=11, liquido=4412.1627, valor_bruto=4456.73, nfe_key=35260312...91595, segmento=VAREJO, fase=2026}
+2026-04-23T00:59:42.713-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...91595, Valor Bruto: 4456.73
+2026-04-23T00:59:43.713-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...91595
+2026-04-23T00:59:43.953-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=19.5068, timestamp=2026-04-23T00:59:43.939595555, adquirente=Teste Adq., ibs_retido=19.5068, transaction_id=12, liquido=3862.3464, valor_bruto=3901.36, nfe_key=35260312...69281, segmento=VAREJO, fase=2026}
+2026-04-23T00:59:43.953-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...69281, Valor Bruto: 3901.36
+2026-04-23T00:59:44.953-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...69281
+2026-04-23T00:59:50.406-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Received transaction.created event: {cbs_retido=14.98055, timestamp=2026-04-23T00:59:50.393175794, adquirente=Teste Adq., ibs_retido=14.98055, transaction_id=13, liquido=2966.1489, valor_bruto=2996.11, nfe_key=35260312...20882, segmento=VAREJO, fase=2026}
+2026-04-23T00:59:50.406-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Processando conciliação para NFe: 35260312...20882, Valor Bruto: 2996.11
+2026-04-23T00:59:51.407-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-1] c.s.c.TransactionEventListener           : Conciliação finalizada para NFe: 35260312...20882
+2026-04-23T01:01:31.789-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-2] o.s.a.r.l.SimpleMessageListenerContainer : Waiting for workers to finish.
+2026-04-23T01:01:32.424-03:00  INFO 152919 --- [conciliation-service] [ntContainer#0-2] o.s.a.r.l.SimpleMessageListenerContainer : Successfully waited for workers to finish.
+2026-04-23T01:01:32.431-03:00  INFO 152919 --- [conciliation-service] [ionShutdownHook] o.s.boot.tomcat.GracefulShutdown         : Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-23T01:01:32.504-03:00  INFO 152919 --- [conciliation-service] [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown         : Graceful shutdown complete
+2026-04-23T01:01:32.555-03:00  INFO 152919 --- [conciliation-service] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-23T01:01:32.573-03:00  INFO 152919 --- [conciliation-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-23T01:01:32.578-03:00  INFO 152919 --- [conciliation-service] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

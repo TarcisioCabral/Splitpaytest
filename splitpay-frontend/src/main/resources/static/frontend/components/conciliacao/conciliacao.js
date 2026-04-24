@@ -1,7 +1,7 @@
 /**
  * Conciliação Component Logic
  */
-export function init() {
+function init() {
     loadMatches();
 }
 

@@ -1,7 +1,7 @@
 /**
  * API Docs Component Logic
  */
-export function init() {
+function init() {
     const headers = document.querySelectorAll('.toggle-api');
     headers.forEach(header => {
         header.addEventListener('click', () => {
@@ -12,3 +12,4 @@ export function init() {
         });
     });
 }
+init();

@@ -3,7 +3,7 @@
  */
 let retainedInterval = null;
 
-export function init() {
+function init() {
     loadTransactions();
     startRetainedSimulation();
     
@@ -143,3 +143,4 @@ function startRetainedSimulation() {
         }, 4000);
     }
 }
+init();

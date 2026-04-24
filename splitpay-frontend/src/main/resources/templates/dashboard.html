@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::section})}">
+<head>
+  <title>Dashboard | SplitPay IVA</title>
+</head>
+<body>
+<section>
+  <div class="alert-banner">
+    <span>⚠</span>
+    <span><strong>Fase de Testes ativa:</strong> Alíquota IBS/CBS em 1% — vigência: Jan–Dez 2026. Implementação plena a partir de 2027.</span>
+  </div>
+
+  <div class="metrics-grid">
+    <div class="metric-card blue">
+      <div class="metric-label">Transações hoje</div>
+      <div class="metric-value" style="color:var(--primary)">1.847</div>
+      <div class="metric-sub up">↑ 12.4% vs ontem</div>
+    </div>
+    <div class="metric-card green">
+      <div class="metric-label">Split retido (IBS+CBS)</div>
+      <div class="metric-value" style="color:var(--green2)">R$<span id="retained">4.283</span></div>
+      <div class="metric-sub">conciliado em tempo real</div>
+    </div>
+    <div class="metric-card amber">
+      <div class="metric-label">Divergências pendentes</div>
+      <div class="metric-value" style="color:var(--amber2)">7</div>
+      <div class="metric-sub warn">↑ 3 nas últimas 2h</div>
+    </div>
+    <div class="metric-card purple">
+      <div class="metric-label">Latência ROC avg</div>
+      <div class="metric-value" style="color:var(--secondary)">142<span style="font-size:14px">ms</span></div>
+      <div class="metric-sub up">dentro do SLA 200ms</div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <div class="card">
+      <div class="card-title">Fluxo Split Payment — ciclo de vida <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
+      <div style="display:flex; justify-content:center; padding: 20px 0;">
+         <div style="font-size: 11px; color: var(--text3); text-align: center;">Checkout → SplitPay IVA (Middleware) → Adquirente → ROC</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Alíquotas vigentes</div>
+      <div class="icon-card-grid">
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--primary)">🏛️</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">IBS</div>
+            <div class="icon-card-desc"><span class="badge badge-info" style="font-size: 13px;">0.5%</span> <span class="badge badge-neutral">Teste 2026</span></div>
+          </div>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--secondary)">🏢</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">CBS</div>
+            <div class="icon-card-desc"><span class="badge badge-info" style="font-size: 13px;">0.5%</span> <span class="badge badge-neutral">Teste 2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
+      <div class="card-title" style="margin-bottom: 0;">Últimas transações processadas <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
+      <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-play"></i> Simular Envio NF-e</button>
+    </div>
+    <table class="tx-table table-minimalist">
+      <thead>
+        <tr><th>Chave NF-e</th><th>Valor Bruto</th><th>IBS retido</th><th>CBS retido</th><th>Adquirente</th><th>Status</th><th>Timestamp</th></tr>
+      </thead>
+      <tbody id="tx-body"></tbody>
+    </table>
+    <div class="pagination-container">
+      <div class="pagination-info">Mostrando transações recentes</div>
+      <div class="pagination-controls">
+          <button class="page-btn" disabled>&lt;</button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <button class="page-btn">&gt;</button>
+      </div>
+    </div>
+  </div>
+  <!-- Specific Component JS Script -->
+  <script type="module" th:src="@{/frontend/components/dashboard/dashboard.js}"></script>
+  <link rel="stylesheet" th:href="@{/frontend/components/dashboard/dashboard.css}">
+</section>
+</body>
+</html>

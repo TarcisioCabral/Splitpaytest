@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::section})}">
+<head>
+  <title>Simulador de Margem | SplitPay IVA</title>
+</head>
+<body>
+<section>
+  <div class="three-col" style="grid-template-columns: 1fr 2fr;">
+    <div class="card">
+      <div class="card-title">Parâmetros da Operação</div>
+      <div class="sim-form">
+        <div class="sim-field"><label>Preço de Venda Bruto (R$)</label><input type="number" id="sim-price" value="1000.00"></div>
+        <div class="sim-field"><label>Custo Total de Aquisição (R$)</label><input type="number" id="sim-cost" value="600.00"></div>
+        <div class="sim-field"><label>% do Custo com Crédito</label><input type="range" id="sim-credit-pct" min="0" max="100" value="80"></div>
+        <div class="sim-field">
+          <label>Fase de Implementação</label>
+          <select id="sim-phase">
+            <option value="2026_teste">2026 — Transição (1%)</option>
+            <option value="2029_pleno" selected>2029+ — IVA Pleno (~27%)</option>
+          </select>
+        </div>
+        <button class="sim-btn" id="btn-sim-calc">Simular Agora</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Resultado DRE Projetado</div>
+      <table class="tx-table">
+        <thead><tr><th>Componente</th><th style="text-align:right">Atual</th><th style="text-align:right">IVA Dual</th><th style="text-align:right">Variação</th></tr></thead>
+        <tbody id="sim-table-body"></tbody>
+      </table>
+      <div class="two-col" style="margin-top: 20px;">
+         <div class="aliq-item"><div class="aliq-name">Margem Atual</div><div id="r-margem-atual" class="aliq-val">--</div></div>
+         <div class="aliq-item"><div class="aliq-name">Nova Margem</div><div id="r-margem-nova" class="aliq-val" style="color:var(--green2)">--</div></div>
+      </div>
+      <div class="sim-result" style="display:block">
+         <div class="sim-result-row"><span class="key">Preço Sugerido para Manter Margem</span><span id="r-preco-ideal" class="val val-blue">--</span></div>
+         <div class="sim-result-row"><span class="key">Split Retido Estimado</span><span id="r-split-retido" class="val val-red">--</span></div>
+         <div class="sim-result-row"><span class="key">Repasse Líquido D0</span><span id="r-split-liquido" class="val val-green">--</span></div>
+      </div>
+    </div>
+  </div>
+  <script type="module" th:src="@{/frontend/components/simulador/simulador.js}"></script>
+  <link rel="stylesheet" th:href="@{/frontend/components/simulador/simulador.css}">
+</section>
+</body>
+</html>

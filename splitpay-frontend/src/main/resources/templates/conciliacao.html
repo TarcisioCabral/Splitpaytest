@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::section})}">
+<head>
+  <title>Conciliação NF-e | SplitPay IVA</title>
+</head>
+<body>
+<section>
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">Conciliação NF-e × Split Payment <span class="badge badge-success" style="margin-left: 8px;">TEMPO REAL</span></div>
+      <div id="match-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Resumo de conciliação</div>
+      <div class="icon-card-grid" style="grid-template-columns: 1fr; margin-top: 0;">
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--green2)">✅</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">Conciliadas com sucesso</div>
+            <div class="icon-card-desc"><span style="font-size: 16px; font-weight: bold; color: var(--green2);">1.840</span></div>
+          </div>
+        </div>
+        <div class="icon-card">
+          <div class="icon-card-icon" style="color: var(--amber2)">⚠️</div>
+          <div class="icon-card-content">
+            <div class="icon-card-title">Divergências</div>
+            <div class="icon-card-desc"><span style="font-size: 16px; font-weight: bold; color: var(--amber2);">5</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Specific Component JS/CSS -->
+  <script type="module" th:src="@{/frontend/components/conciliacao/conciliacao.js}"></script>
+</section>
+</body>
+</html>

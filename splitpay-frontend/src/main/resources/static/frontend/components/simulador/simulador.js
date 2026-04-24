@@ -3,7 +3,7 @@
  */
 import { getMargemProjecao } from '../../api.js';
 
-export function init() {
+function init() {
     // Attach event listeners
     const priceField = document.getElementById('sim-price');
     const costField = document.getElementById('sim-cost');
@@ -137,3 +137,4 @@ function renderSimResults(data) {
     document.getElementById('r-split-retido').textContent = '-' + fmtBRL(splitRetention);
     document.getElementById('r-split-liquido').textContent = fmtBRL(repasseLiquido);
 }
+init();

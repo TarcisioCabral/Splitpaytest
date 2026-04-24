@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SplitPay IVA | Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" th:href="@{/style.css}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
 
@@ -39,7 +39,7 @@
      <!-- Pages will be injected here by js/app.js -->
   </main>
 
-  <script type="module" src="frontend/app.js"></script>
+  <script type="module" th:src="@{/frontend/app.js}"></script>
 </body>
 
 </html>

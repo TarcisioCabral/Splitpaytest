@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::section})}">
+<head>
+  <title>API Docs | SplitPay IVA</title>
+</head>
+<body>
+<section>
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">
+      API Reference — SplitPay IVA Middleware
+      <span class="card-badge badge-api">v1.0.0-beta</span>
+    </div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">
+      Base URL: <code style="font-family:var(--mono);color:var(--primary);background:var(--surface2);padding:2px 8px;border-radius:4px">https://api.splitpay-iva.com.br/v1</code>
+      &nbsp;·&nbsp; Auth: Bearer Token &nbsp;·&nbsp; TLS 1.3
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header toggle-api">
+        <span class="method-tag m-post">POST</span>
+        <span class="api-path">/split/process</span>
+        <span class="api-desc">Processa e retém IBS/CBS na transação</span>
+      </div>
+      <div class="api-body open">
+        <pre><span class="c-cmt">// Request</span>
+  {
+    <span class="c-key">"nfe_key"</span>: <span class="c-str">"35260312345678000195550010000001231000000123"</span>,
+    <span class="c-key">"valor_bruto"</span>: <span class="c-num">1000.00</span>,
+    <span class="c-key">"adquirente"</span>: <span class="c-str">"cielo"</span>,
+    <span class="c-key">"segmento"</span>: <span class="c-str">"geral"</span>,
+    <span class="c-key">"fase"</span>: <span class="c-str">"2026_teste"</span>
+  }
+
+  <span class="c-cmt">// Response 200</span>
+  {
+    <span class="c-key">"transaction_id"</span>: <span class="c-str">"txn_abc123"</span>,
+    <span class="c-key">"ibs_retido"</span>: <span class="c-num">5.00</span>,
+    <span class="c-key">"cbs_retido"</span>: <span class="c-num">5.00</span>,
+    <span class="c-key">"liquido"</span>: <span class="c-num">990.00</span>,
+    <span class="c-key">"roc_confirmado"</span>: <span class="c-bool">true</span>,
+    <span class="c-key">"timestamp"</span>: <span class="c-str">"2026-03-27T14:32:00Z"</span>
+  }</pre>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header toggle-api">
+        <span class="method-tag m-get">GET</span>
+        <span class="api-path">/conciliacao/{nfe_key}</span>
+        <span class="api-desc">Status de conciliação NF-e × Split</span>
+      </div>
+      <div class="api-body">
+        <pre><span class="c-cmt">// Response 200</span>
+  {
+    <span class="c-key">"nfe_key"</span>: <span class="c-str">"35260312345..."</span>,
+    <span class="c-key">"status"</span>: <span class="c-str">"conciliado"</span>,
+    <span class="c-key">"nfe_valor"</span>: <span class="c-num">1000.00</span>,
+    <span class="c-key">"split_retornado"</span>: <span class="c-num">10.00</span>,
+    <span class="c-key">"divergencia"</span>: <span class="c-num">0.00</span>,
+    <span class="c-key">"adquirente_confirmou"</span>: <span class="c-bool">true</span>
+  }</pre>
+      </div>
+    </div>
+
+    <h4 style="margin: 30px 0 10px; color: var(--text2);">APIs Governamentais (Simulação Integrada)</h4>
+
+    <div class="api-endpoint">
+      <div class="api-header toggle-api">
+        <span class="method-tag m-get">GET</span>
+        <span class="api-path" style="color:var(--amber2)">/receita-federal/nfe/validar</span>
+        <span class="api-desc">Validação de Chave de Acesso e Créditos</span>
+      </div>
+      <div class="api-body">
+        <pre><span class="c-cmt">// Integração direta com ambiente da Receita Federal</span>
+  <span class="c-cmt">// Request</span>
+  GET https://api.receita.fazenda.gov.br/v1/nfe/3526.../creditos
+
+  <span class="c-cmt">// Response 200</span>
+  {
+    <span class="c-key">"status"</span>: <span class="c-str">"AUTORIZADO"</span>,
+    <span class="c-key">"base_credito_ibs"</span>: <span class="c-num">450.00</span>,
+    <span class="c-key">"base_credito_cbs"</span>: <span class="c-num">450.00</span>,
+    <span class="c-key">"restricoes"</span>: <span class="c-bool">false</span>
+  }</pre>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header toggle-api">
+        <span class="method-tag m-get">GET</span>
+        <span class="api-path" style="color:var(--amber2)">/comite-gestor/aliquotas/{segmento}</span>
+        <span class="api-desc">Comitê Gestor do IBS - Consulta de Alíquotas</span>
+      </div>
+      <div class="api-body">
+        <pre><span class="c-cmt">// Integração com o Comitê Gestor Nacional do IBS</span>
+  <span class="c-cmt">// Request</span>
+  GET https://api.comitegestoribs.gov.br/v1/aliquotas?segmento=geral
+
+  <span class="c-cmt">// Response 200</span>
+  {
+    <span class="c-key">"segmento"</span>: <span class="c-str">"geral"</span>,
+    <span class="c-key">"fase_atual"</span>: <span class="c-str">"2026_teste"</span>,
+    <span class="c-key">"ibs_estadual_ref"</span>: <span class="c-num">0.0025</span>,
+    <span class="c-key">"ibs_municipal_ref"</span>: <span class="c-num">0.0025</span>,
+    <span class="c-key">"total_ibs"</span>: <span class="c-num">0.005</span>,
+    <span class="c-key">"inicio_vigencia"</span>: <span class="c-str">"2026-01-01"</span>
+  }</pre>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header toggle-api">
+        <span class="method-tag m-post">POST</span>
+        <span class="api-path" style="color:var(--amber2)">/bacen/roc/liquidacao</span>
+        <span class="api-desc">Banco Central - ROC (Repositório Oficial)</span>
+      </div>
+      <div class="api-body">
+        <pre><span class="c-cmt">// Liquidação financeira via PIX/ROC Banco Central</span>
+  <span class="c-cmt">// Request</span>
+  POST https://api.bcb.gov.br/roc/v1/liquidar
+  {
+    <span class="c-key">"conta_recebedor"</span>: <span class="c-str">"ISPB123..."</span>,
+    <span class="c-key">"conta_tesouro_nacional"</span>: <span class="c-str">"ISPB000..."</span>,
+    <span class="c-key">"valor_tributo"</span>: <span class="c-num">10.00</span>,
+    <span class="c-key">"valor_liquido"</span>: <span class="c-num">990.00</span>
+  }
+
+  <span class="c-cmt">// Response 200</span>
+  {
+    <span class="c-key">"end_to_end_id"</span>: <span class="c-str">"E00000000202603271432..."</span>,
+    <span class="c-key">"status"</span>: <span class="c-str">"LIQUIDADO_COM_SPLIT"</span>
+  }</pre>
+      </div>
+    </div>
+
+  </div>
+  <script type="module" th:src="@{/frontend/components/api/api.js}"></script>
+  <link rel="stylesheet" th:href="@{/frontend/components/api/api.css}">
+</section>
+</body>
+</html>

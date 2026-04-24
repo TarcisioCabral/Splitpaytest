@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(title, content)">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:replace="${title}">SplitPay IVA</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+
+<body>
+
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <span class="logo-name">SplitPay IVA</span>
+      <span class="logo-tag">BETA 2026</span>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-login" class="sim-btn" onclick="simularLogin()" style="padding: 6px 12px; font-size: 12px;">Simular Login Keycloak</button>
+      <div class="status-dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">ROC: CONNECTED</span>
+      <span class="badge-env">FASE TESTE · 1%</span>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <a th:href="@{/dashboard}" class="nav-tab" th:classappend="${activeTab == 'dashboard' ? 'active' : ''}">Dashboard</a>
+    <a th:href="@{/conciliacao}" class="nav-tab" th:classappend="${activeTab == 'conciliacao' ? 'active' : ''}">Conciliação NF-e</a>
+    <a th:href="@{/simulador}" class="nav-tab" th:classappend="${activeTab == 'simulador' ? 'active' : ''}">Simulador de Margem</a>
+    <a th:href="@{/api}" class="nav-tab" th:classappend="${activeTab == 'api' ? 'active' : ''}">API Docs</a>
+    <a th:href="@{/roadmap}" class="nav-tab" th:classappend="${activeTab == 'roadmap' ? 'active' : ''}">Roadmap</a>
+    <a th:href="@{/declaracao}" class="nav-tab" th:classappend="${activeTab == 'declaracao' ? 'active' : ''}">Declaração (IBS/CBS)</a>
+  </div>
+
+  <main id="app-content" class="content page active animate__animated animate__fadeInUp animate__faster">
+     <div th:replace="${content}"></div>
+  </main>
+
+  <script th:src="@{/frontend/api.js}" type="module"></script>
+</body>
+</html>
