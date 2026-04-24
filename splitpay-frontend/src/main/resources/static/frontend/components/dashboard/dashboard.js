@@ -37,7 +37,7 @@ async function simulateNfeTransaction() {
 
     try {
         // Call API
-        const { processSplit } = await import('../../api.js');
+        const { processSplit, createSplitStream } = await import('../../api.js');
         await processSplit({
             nfe_key: nfeKey,
             valor_bruto: parseFloat(val),
@@ -46,10 +46,8 @@ async function simulateNfeTransaction() {
             fase: '2026'
         });
 
-        // Start SSE Listener for real-time conciliation feedback
-        const sseUrl = `http://localhost:8081/v1/split/stream/${nfeKey}`;
-        console.log("Connecting to SSE:", sseUrl);
-        const eventSource = new EventSource(sseUrl);
+        // Start SSE Listener for real-time conciliation feedback (via gateway proxy)
+        const eventSource = createSplitStream(nfeKey);
 
         eventSource.addEventListener('COMPLETED', (event) => {
             const response = JSON.parse(event.data);
