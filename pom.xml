@@ -25,13 +25,18 @@
         <module>splitpay-api-gateway</module>
     </modules>
 
+    <!-- ── Centralized version catalog ──────────────────────────────────────── -->
     <properties>
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>
+        <testcontainers.version>1.19.7</testcontainers.version>
+        <pitest-maven.version>1.15.8</pitest-maven.version>
+        <pitest-junit5-plugin.version>1.2.1</pitest-junit5-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Cloud BOM -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -39,6 +44,76 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- Testcontainers BOM – removes hardcoded versions in child POMs -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <!-- ── Spring Boot Maven Plugin ──────────────────────────────
+                     Inherited by every module that uses spring-boot-maven-plugin.
+                     Excludes Lombok from the fat JAR (it is compile-time only).
+                     Child modules just declare the plugin with no extra config. -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!-- ── Maven Compiler Plugin ─────────────────────────────────
+                     Registers Lombok as annotation processor for compile and
+                     test-compile. Child modules no longer need to repeat these
+                     executions.                                          -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <!-- ── PIT Mutation Testing ───────────────────────────────────
+                     Version and junit5-plugin centralised here. Child modules
+                     that want pitest only need to reference the plugin and add
+                     their own <targetClasses>/<targetTests> configuration.  -->
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest-maven.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
+                            <artifactId>pitest-junit5-plugin</artifactId>
+                            <version>${pitest-junit5-plugin.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
 </project>
