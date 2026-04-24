@@ -12,5 +12,8 @@ public record GerarResumoRequest(
     Boolean aplicarCreditos,
     
     @DecimalMin("0.00")
-    BigDecimal creditosExteriores
+    BigDecimal creditosExteriores,
+
+    String fase,
+    String segmento
 ) {}
