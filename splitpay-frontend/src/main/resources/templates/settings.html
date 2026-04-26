@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::title}, ~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Configuração Fiscal - SplitPay</title>
+</head>
+<body>
+<section>
+    <div style="margin-bottom: 24px;" class="animate__animated animate__fadeIn">
+        <h2 class="card-title" style="font-size: 24px; margin-bottom: 4px;">⚙️ Configuração de Alíquotas</h2>
+        <p style="color: var(--text3); font-size: 14px;">Gerencie as taxas de IBS e CBS dinamicamente para cada segmento e fase.</p>
+    </div>
+ 
+    <div class="card animate__animated animate__fadeInUp">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <div class="card-title" style="margin-bottom:0">Regras de Tributação Ativas</div>
+            <button class="btn btn-primary" onclick="openModal()">
+                <i class="fa-solid fa-plus"></i> Nova Regra
+            </button>
+        </div>
+        
+        <table class="table-minimalist">
+            <thead>
+                <tr>
+                    <th>Segmento</th>
+                    <th>Fase</th>
+                    <th>IBS (%)</th>
+                    <th>CBS (%)</th>
+                    <th style="text-align:right">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="rules-table">
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- Modal for New Rule -->
+    <div id="ruleModal" class="modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);">
+        <div class="card animate__animated animate__zoomIn" style="margin: 10% auto; width: 450px; padding: 32px; border-color: var(--primary);">
+            <div class="card-title" style="font-size: 20px; margin-bottom: 24px;">Nova Regra Fiscal</div>
+            <form id="ruleForm" class="sim-form">
+                <div class="sim-field">
+                    <label>Segmento de Atuação</label>
+                    <input type="text" id="segmento" placeholder="ex: alimentacao, saude, geral" required>
+                </div>
+                <div class="sim-field">
+                    <label>Fase da Reforma</label>
+                    <select id="fase" style="background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text);">
+                        <option value="2026_teste">2026 — Transição (1%)</option>
+                        <option value="2027_cbs">2027 — CBS (0.9%)</option>
+                        <option value="2028_transicao">2028 — Transição IBS/CBS</option>
+                        <option value="2029_pleno">2029+ — Implementação Plena</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="sim-field">
+                        <label>Alíquota IBS (%)</label>
+                        <input type="number" id="ibsRate" step="0.01" value="0.5" required>
+                    </div>
+                    <div class="sim-field">
+                        <label>Alíquota CBS (%)</label>
+                        <input type="number" id="cbsRate" step="0.01" value="0.5" required>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top: 12px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Regra</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        async function loadRules() {
+            const res = await fetch('/api/v1/tax-rules');
+            const rules = await res.json();
+            const tbody = document.getElementById('rules-table');
+            tbody.innerHTML = rules.map(r => `
+                <tr>
+                    <td>${r.segmento}</td>
+                    <td>${r.fase}</td>
+                    <td>${(r.ibsRate * 100).toFixed(2)}%</td>
+                    <td>${(r.cbsRate * 100).toFixed(2)}%</td>
+                    <td style="text-align:right">
+                        <button class="btn btn-outline" onclick="deleteRule(${r.id})" style="color: #ff4444; border-color: rgba(255,0,0,0.2); padding: 4px 12px; font-size: 11px;">
+                           <i class="fa-solid fa-trash"></i> Excluir
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openModal() {
+            document.getElementById('ruleModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('ruleModal').style.display = 'none';
+        }
+
+        async function deleteRule(id) {
+            if (confirm('Deseja excluir esta regra?')) {
+                await fetch(`/api/v1/tax-rules/${id}`, { method: 'DELETE' });
+                loadRules();
+            }
+        }
+
+        document.getElementById('ruleForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const payload = {
+                segmento: document.getElementById('segmento').value,
+                fase: document.getElementById('fase').value,
+                ibsRate: parseFloat(document.getElementById('ibsRate').value) / 100,
+                cbsRate: parseFloat(document.getElementById('cbsRate').value) / 100
+            };
+
+            const res = await fetch('/api/v1/tax-rules', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                closeModal();
+                loadRules();
+            } else {
+                alert('Erro ao salvar regra');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', loadRules);
+    </script>
+</section>
+</body>
+</html>

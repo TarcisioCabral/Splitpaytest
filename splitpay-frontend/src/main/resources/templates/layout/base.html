@@ -29,9 +29,11 @@
     <a th:href="@{/dashboard}" class="nav-tab" th:classappend="${activeTab == 'dashboard' ? 'active' : ''}">Dashboard</a>
     <a th:href="@{/conciliacao}" class="nav-tab" th:classappend="${activeTab == 'conciliacao' ? 'active' : ''}">Conciliação NF-e</a>
     <a th:href="@{/simulador}" class="nav-tab" th:classappend="${activeTab == 'simulador' ? 'active' : ''}">Simulador de Margem</a>
+    <a th:href="@{/reports}" class="nav-tab" th:classappend="${activeTab == 'reports' ? 'active' : ''}">Relatórios</a>
+    <a th:href="@{/declaracao}" class="nav-tab" th:classappend="${activeTab == 'declaracao' ? 'active' : ''}">Declaração (IBS/CBS)</a>
+    <a th:href="@{/settings}" class="nav-tab" th:classappend="${activeTab == 'settings' ? 'active' : ''}">Configurações</a>
     <a th:href="@{/api}" class="nav-tab" th:classappend="${activeTab == 'api' ? 'active' : ''}">API Docs</a>
     <a th:href="@{/roadmap}" class="nav-tab" th:classappend="${activeTab == 'roadmap' ? 'active' : ''}">Roadmap</a>
-    <a th:href="@{/declaracao}" class="nav-tab" th:classappend="${activeTab == 'declaracao' ? 'active' : ''}">Declaração (IBS/CBS)</a>
   </div>
 
   <main id="app-content" class="content page active animate__animated animate__fadeInUp animate__faster">

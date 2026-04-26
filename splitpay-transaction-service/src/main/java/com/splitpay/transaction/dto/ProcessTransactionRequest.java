@@ -21,5 +21,8 @@ public record ProcessTransactionRequest(
     
     String segmento,
     
-    String fase
+    String fase,
+
+    @JsonProperty("currency")
+    String currency
 ) {}

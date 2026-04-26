@@ -42,4 +42,28 @@ public class FrontendController {
         model.addAttribute("activeTab", "declaracao");
         return "declaracao";
     }
+
+    @GetMapping("/reports")
+    public String reports(Model model) {
+        model.addAttribute("activeTab", "reports");
+        return "reports";
+    }
+
+    @GetMapping("/settings")
+    public String settings(Model model) {
+        model.addAttribute("activeTab", "settings");
+        return "settings";
+    }
+    
+    @GetMapping("/login")
+    public String login(Model model) {
+        model.addAttribute("hideNav", true);
+        return "auth/login";
+    }
+
+    @GetMapping("/register")
+    public String register(Model model) {
+        model.addAttribute("hideNav", true);
+        return "auth/register";
+    }
 }

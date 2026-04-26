@@ -28,6 +28,11 @@ public class TransactionController {
         return transactionService.streamConciliationUpdates(nfeKey);
     }
 
+    @GetMapping("/stream/dashboard")
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter streamDashboardUpdates() {
+        return transactionService.streamDashboardUpdates();
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<List<Transaction>> getRecentTransactions() {
         return ResponseEntity.ok(transactionService.getRecentTransactions());

@@ -98,6 +98,15 @@ export async function processSplit(data) {
 }
 
 /**
+ * Buscar transações recentes
+ */
+export async function getRecentTransactions() {
+    const resp = await fetch(`${API_BASE}/v1/split/recent`);
+    if (!resp.ok) throw new Error('Erro ao buscar transações');
+    return await resp.json();
+}
+
+/**
  * Download da Guia PDF
  */
 export async function downloadGuiaPDF(headers) {
@@ -119,5 +128,14 @@ export async function downloadGuiaPDF(headers) {
 export function createSplitStream(nfeKey) {
     const sseUrl = `${API_BASE}/v1/split/stream/${nfeKey}`;
     console.log('Connecting to SSE (via proxy):', sseUrl);
+    return new EventSource(sseUrl);
+}
+
+/**
+ * Cria um EventSource (SSE) para o stream global do dashboard.
+ */
+export function createDashboardStream() {
+    const sseUrl = `${API_BASE}/v1/split/stream/dashboard`;
+    console.log('Connecting to Dashboard SSE (via proxy):', sseUrl);
     return new EventSource(sseUrl);
 }

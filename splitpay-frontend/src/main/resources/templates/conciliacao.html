@@ -30,6 +30,46 @@
       </div>
     </div>
   </div>
+ 
+  <div class="card" style="margin-top: 20px;">
+      <div class="card-title">Bulk Processing (Upload em Lote)</div>
+      <p style="color: var(--text3); font-size: 13px; margin-bottom: 16px;">Faça upload de um arquivo CSV contendo uma lista de chaves de NF-e para conciliação em massa.</p>
+      <div style="display: flex; gap: 12px; align-items: center;">
+        <input type="file" id="bulk-file" accept=".csv" style="background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 8px; color: var(--text); flex: 1;">
+        <button class="btn btn-primary" onclick="uploadBulk()">
+            <i class="fa-solid fa-cloud-upload"></i> Processar em Lote
+        </button>
+      </div>
+      <div id="bulk-status" style="margin-top: 12px; font-size: 12px; color: var(--primary-light);"></div>
+  </div>
+ 
+  <script th:inline="javascript">
+      async function uploadBulk() {
+          const fileInput = document.getElementById('bulk-file');
+          const status = document.getElementById('bulk-status');
+          
+          if (!fileInput.files[0]) {
+              alert('Selecione um arquivo CSV');
+              return;
+          }
+
+          const formData = new FormData();
+          formData.append('file', fileInput.files[0]);
+
+          status.innerText = 'Enviando arquivo...';
+          try {
+              const res = await fetch('/v1/bulk/upload', {
+                  method: 'POST',
+                  body: formData
+              });
+              const data = await res.json();
+              status.innerText = data.message;
+          } catch (e) {
+              status.innerText = 'Erro ao enviar arquivo.';
+          }
+      }
+  </script>
+ 
   <!-- Specific Component JS/CSS -->
   <script type="module" th:src="@{/frontend/components/conciliacao/conciliacao.js}"></script>
 </section>

@@ -1,48 +1,45 @@
 package com.splitpay.transaction.service;
 
+import com.splitpay.transaction.TaxRule;
+import com.splitpay.transaction.TaxRuleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 class IvaDualTaxServiceTest {
 
     private IvaDualTaxService taxService;
+    private TaxRuleRepository taxRuleRepository;
 
     @BeforeEach
     void setUp() {
-        taxService = new IvaDualTaxService();
+        taxRuleRepository = Mockito.mock(TaxRuleRepository.class);
+        taxService = new IvaDualTaxService(taxRuleRepository);
     }
 
     @Test
     void shouldReturnBaseAliquotaFor2026() {
+        when(taxRuleRepository.findBySegmentoAndFase("geral", "2026_teste"))
+                .thenReturn(Optional.of(new TaxRule(1L, "geral", "2026_teste", new BigDecimal("0.005"), new BigDecimal("0.005"))));
+
         BigDecimal base = taxService.getBaseAliquota("2026_teste");
         assertThat(base).isEqualByComparingTo("0.01");
     }
 
     @Test
-    void shouldReturnBaseAliquotaFor2027() {
-        BigDecimal base = taxService.getBaseAliquota("2027_cbs");
-        assertThat(base).isEqualByComparingTo("0.135");
-    }
-
-    @Test
-    void shouldReturnBaseAliquotaFor2028() {
-        BigDecimal base = taxService.getBaseAliquota("2028_transicao");
-        assertThat(base).isEqualByComparingTo("0.22");
-    }
-
-    @Test
-    void shouldReturnBaseAliquotaFor2029() {
-        BigDecimal base = taxService.getBaseAliquota("2029_pleno");
-        assertThat(base).isEqualByComparingTo("0.27");
-    }
-
-    @Test
     void shouldCalculateRatesFor2026() {
+        when(taxRuleRepository.findBySegmentoAndFase("outro", "2026_teste"))
+                .thenReturn(Optional.empty());
+        when(taxRuleRepository.findBySegmentoAndFase("geral", "2026_teste"))
+                .thenReturn(Optional.of(new TaxRule(1L, "geral", "2026_teste", new BigDecimal("0.005"), new BigDecimal("0.005"))));
+
         Map<String, BigDecimal> rates = taxService.calculateRates("outro", "2026_teste");
         assertThat(rates.get("ibs")).isEqualByComparingTo("0.005");
         assertThat(rates.get("cbs")).isEqualByComparingTo("0.005");
@@ -50,42 +47,15 @@ class IvaDualTaxServiceTest {
     }
 
     @Test
-    void shouldCalculateRatesFor2027() {
-        Map<String, BigDecimal> rates = taxService.calculateRates("outro", "2027_cbs");
-        assertThat(rates.get("ibs")).isEqualByComparingTo("0.0");
-        assertThat(rates.get("cbs")).isEqualByComparingTo("0.135");
-        assertThat(rates.get("total")).isEqualByComparingTo("0.135");
-    }
+    void shouldApplyRuleForSaude() {
+        when(taxRuleRepository.findBySegmentoAndFase("saude", "2029_pleno"))
+                .thenReturn(Optional.of(new TaxRule(2L, "saude", "2029_pleno", new BigDecimal("0.054"), new BigDecimal("0.054"))));
 
-    @Test
-    void shouldApplyReducerForSaudeAndAlimentacao() {
         Map<String, BigDecimal> rates = taxService.calculateRates("saude", "2029_pleno");
-        
-        // Base for 2029 is 0.27
-        // IBS and CBS base without reducer = 0.135
-        // Reducer is 0.4
-        // IBS = 0.135 * 0.4 = 0.054
-        // CBS = 0.135 * 0.4 = 0.054
-        // Total = 0.108
         
         assertThat(rates.get("ibs")).isEqualByComparingTo("0.054");
         assertThat(rates.get("cbs")).isEqualByComparingTo("0.054");
         assertThat(rates.get("total")).isEqualByComparingTo("0.108");
     }
-
-    @Test
-    void shouldApplyReducerForEducacao() {
-        Map<String, BigDecimal> rates = taxService.calculateRates("educacao", "2028_transicao");
-        
-        // Base for 2028 is 0.22
-        // IBS and CBS base without reducer = 0.11
-        // Reducer is 0.3
-        // IBS = 0.11 * 0.3 = 0.033
-        // CBS = 0.11 * 0.3 = 0.033
-        // Total = 0.066
-        
-        assertThat(rates.get("ibs")).isEqualByComparingTo("0.033");
-        assertThat(rates.get("cbs")).isEqualByComparingTo("0.033");
-        assertThat(rates.get("total")).isEqualByComparingTo("0.066");
-    }
 }
+

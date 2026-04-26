@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout/base :: layout(~{::title}, ~{::content})}">
+<head>
+    <title>Acessar Conta | SplitPay IVA</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="auth-page">
+            <div class="auth-card-premium">
+                <div class="auth-header-premium">
+                    <div class="auth-logo-large">⚡</div>
+                    <h1 class="auth-title-premium">Bem-vindo de volta</h1>
+                    <p class="auth-subtitle-premium">Entre com suas credenciais para gerenciar seus splits de impostos.</p>
+                </div>
+                
+                <form id="login-form" class="auth-form-premium">
+                    <div class="auth-input-group">
+                        <label for="email" class="auth-label-premium">E-mail Corporativo</label>
+                        <input type="email" id="email" class="auth-input-premium" required placeholder="ex: diretor@empresa.com.br" autocomplete="email">
+                    </div>
+                    
+                    <div class="auth-input-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label for="password" class="auth-label-premium">Senha de Acesso</label>
+                            <a href="#" class="auth-link-premium" style="font-size: 11px;">Esqueceu a senha?</a>
+                        </div>
+                        <input type="password" id="password" class="auth-input-premium" required placeholder="••••••••" autocomplete="current-password">
+                    </div>
+
+                    <div id="error-message" class="error-alert-premium" style="display: none;">
+                        <span>⚠️</span>
+                        <span id="error-text">E-mail ou senha inválidos</span>
+                    </div>
+
+                    <button type="submit" class="auth-btn-premium">
+                        <span>Acessar Dashboard</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </form>
+                
+                <div class="auth-footer-premium">
+                    Ainda não tem uma conta institucional? <br>
+                    <a th:href="@{/register}" class="auth-link-premium">Solicitar acesso agora</a>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import { login } from '/frontend/api.js';
+
+            const form = document.getElementById('login-form');
+            const errorEl = document.getElementById('error-message');
+            const errorTextEl = document.getElementById('error-text');
+            const submitBtn = form.querySelector('button');
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Visual feedback
+                errorEl.style.display = 'none';
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.7';
+                submitBtn.querySelector('span').textContent = 'Autenticando...';
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                try {
+                    await login(email, password);
+                    window.location.href = '/dashboard';
+                } catch (err) {
+                    errorTextEl.textContent = 'Credenciais incorretas ou conta inativa';
+                    errorEl.style.display = 'flex';
+                    
+                    // Reset button
+                    submitBtn.disabled = false;
+                    submitBtn.style.opacity = '1';
+                    submitBtn.querySelector('span').textContent = 'Acessar Dashboard';
+                }
+            });
+        </script>
+    </div>
+</body>
+</html>

@@ -41,7 +41,8 @@ class TransactionControllerTest {
                 new BigDecimal("100.00"),
                 "Cielo",
                 "alimentacao",
-                "2026_teste"
+                "2026_teste",
+                "BRL"
         );
 
         Map<String, Object> mockResponse = new HashMap<>();
@@ -66,7 +67,8 @@ class TransactionControllerTest {
                 new BigDecimal("-10.00"),
                 "",
                 "alimentacao",
-                "2026_teste"
+                "2026_teste",
+                "BRL"
         );
 
         mockMvc.perform(post("/v1/split/process")

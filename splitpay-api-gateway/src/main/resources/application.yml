@@ -8,12 +8,75 @@ spring:
     gateway:
       mvc:
         routes:
-          - id: transaction-service-route
+          - id: transaction-split-route
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
+            predicates:
+              - Path=/v1/split/**
+            filters:
+              - CircuitBreaker=TransactionCB,forward:/fallback
+
+          - id: transaction-declaracao-route
             uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
             predicates:
               - Path=/v1/declaracao/**
             filters:
               - CircuitBreaker=TransactionCB,forward:/fallback
+
+          - id: transaction-simulador-route
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
+            predicates:
+              - Path=/v1/simulador/**
+            filters:
+              - CircuitBreaker=TransactionCB,forward:/fallback
+
+          - id: transaction-aliquota-route
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
+            predicates:
+              - Path=/v1/aliquota/**
+            filters:
+              - CircuitBreaker=TransactionCB,forward:/fallback
+
+          - id: transaction-webhook-route
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
+            predicates:
+              - Path=/v1/webhook/**
+            filters:
+              - CircuitBreaker=TransactionCB,forward:/fallback
+
+          - id: auth-route
+            uri: ${AUTH_SERVICE_URL:http://localhost:8084}
+            predicates:
+              - Path=/v1/auth/**
+            filters:
+              - RewritePath=/v1/auth/(?<segment>.*), /auth/$\{segment}
+
+          - id: user-route
+            uri: ${AUTH_SERVICE_URL:http://localhost:8084}
+            predicates:
+              - Path=/v1/user/**
+            filters:
+              - RewritePath=/v1/user/(?<segment>.*), /user/$\{segment}
+
+          - id: tax-rules-route
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
+            predicates:
+              - Path=/v1/tax-rules/**
+            filters:
+              - RewritePath=/v1/tax-rules/(?<segment>.*), /api/tax-rules/$\{segment}
+
+          - id: reports-route
+            uri: ${REPORTS_SERVICE_URL:http://localhost:8086}
+            predicates:
+              - Path=/v1/reports/**
+            filters:
+              - RewritePath=/v1/reports/(?<segment>.*), /api/reports/$\{segment}
+ 
+          - id: transaction-export-route
+            uri: ${TRANSACTION_SERVICE_URL:http://localhost:8081}
+            predicates:
+              - Path=/v1/export/**
+            filters:
+              - RewritePath=/v1/export/(?<segment>.*), /api/transactions/export/$\{segment}
   security:
     oauth2:
       resourceserver:

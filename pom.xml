@@ -23,6 +23,9 @@
         <module>splitpay-transaction-service</module>
         <module>splitpay-conciliation-service</module>
         <module>splitpay-api-gateway</module>
+        <module>splitpay-auth-service</module>
+        <module>splitpay-reports-service</module>
+        <module>splitpay-notification-service</module>
     </modules>
 
     <!-- ── Centralized version catalog ──────────────────────────────────────── -->

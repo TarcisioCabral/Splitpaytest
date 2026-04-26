@@ -20,13 +20,19 @@ public class TransactionService {
     private final RabbitTemplate rabbitTemplate;
     private final SseNotificationService sseNotificationService;
     private final IvaDualTaxService ivaDualTaxService;
+    private final CurrencyService currencyService;
 
     public Map<String, Object> processTransaction(ProcessTransactionRequest payload) {
         String nfeKey = payload.nfeKey();
-        BigDecimal valorBruto = payload.valorBruto();
+        BigDecimal originalAmount = payload.valorBruto();
         String adquirente = payload.adquirente();
         String segmento = payload.segmento();
         String fase = payload.fase();
+        String currency = payload.currency() != null ? payload.currency() : "BRL";
+
+        // Multi-currency support: convert to BRL if necessary
+        BigDecimal exchangeRate = currencyService.getExchangeRate(currency);
+        BigDecimal valorBruto = currencyService.convertToBrl(originalAmount, currency);
 
         // Dynamic calc for IBS / CBS based on phase and segment
         Map<String, BigDecimal> rates = ivaDualTaxService.calculateRates(segmento, fase);
@@ -37,6 +43,9 @@ public class TransactionService {
         Transaction tx = new Transaction();
         tx.setNfeKey(nfeKey);
         tx.setValorBruto(valorBruto);
+        tx.setOriginalAmount(originalAmount);
+        tx.setCurrency(currency);
+        tx.setExchangeRate(exchangeRate);
         tx.setIbsRetido(ibs);
         tx.setCbsRetido(cbs);
         tx.setLiquido(liquido);
@@ -45,6 +54,9 @@ public class TransactionService {
         tx.setFase(fase);
         
         transactionRepository.save(tx);
+
+        // Broadcast to dashboard
+        sseNotificationService.broadcastToDashboard(tx);
 
         // Publish event to RabbitMQ
         rabbitTemplate.convertAndSend("transaction.created", Map.of(
@@ -71,6 +83,10 @@ public class TransactionService {
 
     public org.springframework.web.servlet.mvc.method.annotation.SseEmitter streamConciliationUpdates(String nfeKey) {
         return sseNotificationService.createEmitter(nfeKey);
+    }
+
+    public org.springframework.web.servlet.mvc.method.annotation.SseEmitter streamDashboardUpdates() {
+        return sseNotificationService.createDashboardEmitter();
     }
 
     public List<Transaction> getRecentTransactions() {

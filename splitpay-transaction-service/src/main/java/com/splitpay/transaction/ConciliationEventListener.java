@@ -23,6 +23,7 @@ public class ConciliationEventListener {
         String nfeKey = (String) payload.get("nfe_key");
         if (nfeKey != null) {
             sseNotificationService.sendNotification(nfeKey, payload);
+            sseNotificationService.broadcastToDashboard(payload); // Notify dashboard about status change
         } else {
             log.warn("Received conciliation event without nfe_key: {}", payload);
         }

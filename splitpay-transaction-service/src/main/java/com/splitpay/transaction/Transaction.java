@@ -32,6 +32,15 @@ public class Transaction {
     private String segmento;
     private String fase;
     
+    @Column(name = "currency")
+    private String currency = "BRL";
+
+    @Column(name = "original_amount")
+    private BigDecimal originalAmount;
+
+    @Column(name = "exchange_rate")
+    private BigDecimal exchangeRate = BigDecimal.ONE;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 

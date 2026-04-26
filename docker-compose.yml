@@ -124,6 +124,62 @@ services:
     networks:
       - splitpay-network
 
+  auth-service:
+    build:
+      context: .
+      dockerfile: splitpay-auth-service/Dockerfile
+    container_name: splitpay-auth-service
+    restart: on-failure
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health || exit 1"]
+    networks:
+      - splitpay-network
+
+  reports-service:
+    build:
+      context: .
+      dockerfile: splitpay-reports-service/Dockerfile
+    container_name: splitpay-reports-service
+    restart: on-failure
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/splitpay
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      <<: *healthcheck-defaults
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8086/actuator/health || exit 1"]
+    networks:
+      - splitpay-network
+ 
+  notification-service:
+    build:
+      context: .
+      dockerfile: splitpay-notification-service/Dockerfile
+    container_name: splitpay-notification-service
+    restart: on-failure
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_PASS: ${RABBITMQ_DEFAULT_PASS}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - splitpay-network
+
   api-gateway:
     build:
       context: .
@@ -135,9 +191,13 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: prod
       TRANSACTION_SERVICE_URL: http://transaction-service:8081
+      AUTH_SERVICE_URL: http://auth-service:8084
+      REPORTS_SERVICE_URL: http://reports-service:8086
       KEYCLOAK_ISSUER_URI: http://keycloak:8080/realms/splitpay
     depends_on:
       transaction-service:
+        condition: service_healthy
+      auth-service:
         condition: service_healthy
       keycloak:
         condition: service_healthy

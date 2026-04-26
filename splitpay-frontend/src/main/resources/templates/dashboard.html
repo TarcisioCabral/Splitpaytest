@@ -64,7 +64,15 @@
   <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
       <div class="card-title" style="margin-bottom: 0;">Últimas transações processadas <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
-      <div th:replace="~{fragments/button :: button(id='btn-simulate-nfe', text='Simular Envio NF-e', icon='fa-solid fa-play', cssClass='btn-primary', type='button')}"></div>
+      <div style="display: flex; gap: 8px;">
+        <a href="/v1/export/csv" class="sim-btn" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2); text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+           <i class="fa-solid fa-file-csv"></i> Exportar CSV
+        </a>
+        <a href="/v1/export/pdf" class="sim-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.2); text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+           <i class="fa-solid fa-file-pdf"></i> Exportar PDF
+        </a>
+        <div th:replace="~{fragments/button :: button(id='btn-simulate-nfe', text='Simular Envio NF-e', icon='fa-solid fa-play', cssClass='btn-primary', type='button')}"></div>
+      </div>
     </div>
     <table class="tx-table table-minimalist">
       <thead>

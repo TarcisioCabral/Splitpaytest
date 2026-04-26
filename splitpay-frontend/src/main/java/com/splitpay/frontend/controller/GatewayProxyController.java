@@ -41,20 +41,52 @@ public class GatewayProxyController {
     }
 
     // ------------------------------------------------------------------ //
+    //  SSE Proxy — specialized for streaming                              //
+    // ------------------------------------------------------------------ //
+    @RequestMapping(value = "/v1/split/stream/**",
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<StreamingResponseBody> proxySse(HttpServletRequest request) {
+        String path = request.getRequestURI().replaceFirst("^/api", "");
+        String targetUri = gatewayUrl + path;
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(outputStream -> {
+                    restTemplate.execute(targetUri, HttpMethod.GET, req -> {
+                        // Forward authorization header if present
+                        String auth = request.getHeader("Authorization");
+                        if (auth != null) req.getHeaders().set("Authorization", auth);
+                    }, response -> {
+                        InputStream inputStream = response.getBody();
+                        byte[] buffer = new byte[8192];
+                        int bytesRead;
+                        while ((bytesRead = inputStream.read(buffer)) != -1) {
+                            outputStream.write(buffer, 0, bytesRead);
+                            outputStream.flush();
+                        }
+                        return null;
+                    });
+                });
+    }
+
+    // ------------------------------------------------------------------ //
     //  Generic proxy — handles GET, POST, PUT, DELETE, PATCH              //
     // ------------------------------------------------------------------ //
 
     @RequestMapping(value = "/**",
             produces = {MediaType.APPLICATION_JSON_VALUE,
-                        MediaType.TEXT_EVENT_STREAM_VALUE,
                         MediaType.APPLICATION_OCTET_STREAM_VALUE,
                         MediaType.ALL_VALUE})
     public ResponseEntity<byte[]> proxy(
             HttpServletRequest request,
             @RequestBody(required = false) byte[] body) throws Exception {
 
-        // Build target URI: strip "/api" prefix, preserve path + query string
         String path = request.getRequestURI().replaceFirst("^/api", "");
+
+        // Skip SSE paths as they are handled by proxySse
+        if (path.startsWith("/v1/split/stream/")) {
+            return null; // Should be handled by proxySse due to more specific mapping or produces
+        }
         String queryString = request.getQueryString();
         String targetUri = gatewayUrl + path + (queryString != null ? "?" + queryString : "");
 

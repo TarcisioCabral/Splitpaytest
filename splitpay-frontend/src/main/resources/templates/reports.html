@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::title}, ~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Relatórios e Analytics - SplitPay</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<section>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;" class="animate__animated animate__fadeIn">
+        <div>
+            <h2 class="card-title" style="font-size: 24px; margin-bottom: 4px;">📈 Analytics e Tendências Fiscais</h2>
+            <p style="color: var(--text3); font-size: 14px;">Visualização de retenção de IBS e CBS por período e segmento.</p>
+        </div>
+        <button class="btn btn-outline" onclick="window.print()">
+            <i class="fa-solid fa-print"></i> Imprimir Relatório
+        </button>
+    </div>
+ 
+    <div class="two-col">
+        <div class="card animate__animated animate__fadeInLeft">
+            <div class="card-title">Retenção por Segmento</div>
+            <canvas id="segmentChart"></canvas>
+        </div>
+        <div class="card animate__animated animate__fadeInRight">
+            <div class="card-title">Tendência por Período</div>
+            <canvas id="periodChart"></canvas>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch segment data
+            const segRes = await fetch('/api/v1/reports/trends/segment');
+            const segData = await segRes.json();
+            
+            const segmentCtx = document.getElementById('segmentChart').getContext('2d');
+            new Chart(segmentCtx, {
+                type: 'bar',
+                data: {
+                    labels: segData.map(d => d.segmento),
+                    datasets: [
+                        {
+                            label: 'IBS',
+                            data: segData.map(d => d.total_ibs),
+                            backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                            borderColor: '#10b981',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'CBS',
+                            data: segData.map(d => d.total_cbs),
+                            backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                            borderColor: '#3b82f6',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    plugins: { legend: { labels: { color: '#fafaf9' } } },
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a29e' } },
+                        x: { grid: { display: false }, ticks: { color: '#a8a29e' } }
+                    }
+                }
+            });
+
+            // Fetch period data
+            const perRes = await fetch('/api/v1/reports/trends/period');
+            const perData = await perRes.json();
+
+            const periodCtx = document.getElementById('periodChart').getContext('2d');
+            new Chart(periodCtx, {
+                type: 'line',
+                data: {
+                    labels: perData.map(d => d.data),
+                    datasets: [
+                        {
+                            label: 'IBS Total',
+                            data: perData.map(d => d.total_ibs),
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'CBS Total',
+                            data: perData.map(d => d.total_cbs),
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: { 
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#fafaf9' } } },
+                    scales: { 
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#a8a29e' } },
+                        x: { grid: { display: false }, ticks: { color: '#a8a29e' } }
+                    }
+                }
+            });
+        });
+    </script>
+</section>
+</body>
+</html>
