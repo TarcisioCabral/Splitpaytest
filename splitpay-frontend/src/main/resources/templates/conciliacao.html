@@ -58,7 +58,7 @@
 
           status.innerText = 'Enviando arquivo...';
           try {
-              const res = await fetch('/v1/bulk/upload', {
+              const res = await fetch('/api/v1/bulk/upload', {
                   method: 'POST',
                   body: formData
               });

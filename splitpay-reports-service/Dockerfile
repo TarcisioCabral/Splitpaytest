@@ -4,20 +4,21 @@ WORKDIR /app
 
 # Copy parent POM first for dependency caching
 COPY pom.xml /app/pom.xml
-COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/pom.xml
-COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/pom.xml
-COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/pom.xml
-COPY splitpay-frontend/pom.xml /app/splitpay-frontend/pom.xml
-COPY splitpay-auth-service/pom.xml /app/splitpay-auth-service/pom.xml
-COPY splitpay-reports-service/pom.xml /app/splitpay-reports-service/pom.xml
+COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/
+COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/
+COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/
+COPY splitpay-auth-service/pom.xml /app/splitpay-auth-service/
+COPY splitpay-reports-service/pom.xml /app/splitpay-reports-service/
+COPY splitpay-notification-service/pom.xml /app/splitpay-notification-service/
+COPY splitpay-frontend/pom.xml /app/splitpay-frontend/
 
 # Download dependencies (leverages Docker layer cache)
 RUN apk add --no-cache maven && \
-    mvn -f /app/pom.xml dependency:go-offline -pl reports-service -am -q
+    mvn -f /app/pom.xml dependency:go-offline -pl splitpay-reports-service -am -q
 
 # Copy source and build only this module
 COPY splitpay-reports-service/src /app/splitpay-reports-service/src
-RUN mvn -f /app/pom.xml package -pl reports-service -am -DskipTests -q
+RUN mvn -f /app/pom.xml package -pl splitpay-reports-service -am -DskipTests -q
 
 # ─── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM eclipse-temurin:17-jre-alpine

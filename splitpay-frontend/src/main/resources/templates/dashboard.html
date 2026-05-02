@@ -34,11 +34,34 @@
   </div>
 
   <div class="three-col">
-    <div class="card">
+    <div class="card card-lifecycle">
       <div class="card-title">Fluxo Split Payment — ciclo de vida <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
-      <div style="display:flex; justify-content:center; padding: 20px 0;">
-         <div style="font-size: 11px; color: var(--text3); text-align: center;">Checkout → SplitPay IVA (Middleware) → Adquirente → ROC</div>
+      <div class="lifecycle-container" id="main-lifecycle">
+        <div class="lifecycle-step" id="step-emissao">
+          <div class="step-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+          <div class="step-label">Emissão</div>
+          <div class="step-status">Aguardando</div>
+        </div>
+        <div class="lifecycle-connector"></div>
+        <div class="lifecycle-step" id="step-calculo">
+          <div class="step-icon"><i class="fa-solid fa-calculator"></i></div>
+          <div class="step-label">Cálculo IVA</div>
+          <div class="step-status">Pendente</div>
+        </div>
+        <div class="lifecycle-connector"></div>
+        <div class="lifecycle-step" id="step-conciliacao">
+          <div class="step-icon"><i class="fa-solid fa-code-compare"></i></div>
+          <div class="step-label">Conciliação</div>
+          <div class="step-status">Pendente</div>
+        </div>
+        <div class="lifecycle-connector"></div>
+        <div class="lifecycle-step" id="step-repasse">
+          <div class="step-icon"><i class="fa-solid fa-building-columns"></i></div>
+          <div class="step-label">Repasse ROC</div>
+          <div class="step-status">Pendente</div>
+        </div>
       </div>
+      <div id="lifecycle-nfe-info" style="margin-top: 15px; font-size: 11px; color: var(--text3); text-align: center; font-family: var(--mono);">Nenhuma transação ativa</div>
     </div>
     <div class="card">
       <div class="card-title">Alíquotas vigentes</div>
@@ -65,10 +88,10 @@
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
       <div class="card-title" style="margin-bottom: 0;">Últimas transações processadas <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
       <div style="display: flex; gap: 8px;">
-        <a href="/v1/export/csv" class="sim-btn" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2); text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+        <a href="/api/v1/export/csv" class="sim-btn" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.2); text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
            <i class="fa-solid fa-file-csv"></i> Exportar CSV
         </a>
-        <a href="/v1/export/pdf" class="sim-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.2); text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
+        <a href="/api/v1/export/pdf" class="sim-btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.2); text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">
            <i class="fa-solid fa-file-pdf"></i> Exportar PDF
         </a>
         <div th:replace="~{fragments/button :: button(id='btn-simulate-nfe', text='Simular Envio NF-e', icon='fa-solid fa-play', cssClass='btn-primary', type='button')}"></div>
@@ -91,6 +114,75 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal Simulação NF-e -->
+  <div id="modal-simula-nfe" class="modal">
+    <div class="modal-content animate__animated animate__zoomIn animate__faster">
+      <div class="modal-header">
+        <h3 class="modal-title">Simular Envio de NF-e (Modelo 55)</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-simulation">
+          <div class="form-group">
+            <label for="sim-nfe-key">Chave de Acesso (44 dígitos)</label>
+            <div style="display:flex; gap:8px;">
+              <input type="text" id="sim-nfe-key" required maxlength="44" style="flex:1" placeholder="Gerada automaticamente ou insira manual">
+              <button type="button" id="btn-gen-key" class="btn-secondary" style="padding: 0 12px;"><i class="fa-solid fa-sync"></i></button>
+            </div>
+          </div>
+          
+          <div class="form-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+            <div class="form-group">
+              <label for="sim-valor">Valor Bruto (R$)</label>
+              <input type="number" id="sim-valor" required step="0.01" min="0.01" value="1000.00" style="width:100%">
+            </div>
+            <div class="form-group">
+              <label for="sim-adquirente">Adquirente / Sub</label>
+              <select id="sim-adquirente" required style="width:100%">
+                <option value="Stone">Stone</option>
+                <option value="Cielo">Cielo</option>
+                <option value="Rede">Rede</option>
+                <option value="PagSeguro">PagSeguro</option>
+                <option value="SplitPay Direct">SplitPay Direct</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="sim-segmento">Segmento de Tributação</label>
+            <select id="sim-segmento" required style="width:100%">
+              <option value="geral">Padrão (Geral)</option>
+              <option value="educacao">Educação (Redução 60%)</option>
+              <option value="saude">Saúde (Redução 60%)</option>
+              <option value="alimentacao">Alimentação (Cesta Básica)</option>
+              <option value="transporte">Transporte Coletivo</option>
+            </select>
+          </div>
+
+          <div id="sim-lifecycle" class="sim-lifecycle" style="display:none; margin: 24px 0; padding: 16px; background: rgba(255,255,255,0.03); border-radius: 12px;">
+            <div class="step" id="step-1">
+              <div class="step-dot"></div>
+              <span class="step-text">Envio NF-e</span>
+            </div>
+            <div class="step" id="step-2">
+              <div class="step-dot"></div>
+              <span class="step-text">Cálculo Split</span>
+            </div>
+            <div class="step" id="step-3">
+              <div class="step-dot"></div>
+              <span class="step-text">Liquidado ROC</span>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-sim" class="btn-primary" style="width:100%; padding:14px; margin-top:10px;">
+            Iniciar Simulação
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <!-- Specific Component JS Script -->
   <script type="module" th:src="@{/frontend/components/dashboard/dashboard.js}"></script>
   <link rel="stylesheet" th:href="@{/frontend/components/dashboard/dashboard.css}">

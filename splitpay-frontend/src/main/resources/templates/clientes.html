@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html th:replace="~{layout/base :: layout(~{::title}, ~{::section})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestão de Clientes - SplitPay</title>
+</head>
+<body>
+<section>
+    <div style="margin-bottom: 24px;" class="animate__animated animate__fadeIn">
+        <h2 class="card-title" style="font-size: 24px; margin-bottom: 4px;">👥 Gestão de Clientes e Usuários</h2>
+        <p style="color: var(--text3); font-size: 14px;">Administre os perfis de acesso, cadastre novos parceiros e gerencie permissões.</p>
+    </div>
+ 
+    <div class="card animate__animated animate__fadeInUp">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+            <div class="card-title" style="margin-bottom:0">Lista de Acessos Ativos</div>
+            <button class="btn btn-primary" onclick="openModal()">
+                <i class="fa-solid fa-user-plus"></i> Novo Cliente
+            </button>
+        </div>
+        
+        <table class="table-minimalist">
+            <thead>
+                <tr>
+                    <th>Nome de Usuário</th>
+                    <th>E-mail</th>
+                    <th>Perfil (Role)</th>
+                    <th style="text-align:right">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="users-table">
+                <!-- Data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- Modal for New/Edit User -->
+    <div id="userModal" class="modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);">
+        <div class="card animate__animated animate__zoomIn" style="margin: 5% auto; width: 450px; padding: 32px; border-color: var(--primary);">
+            <div id="modalTitle" class="card-title" style="font-size: 20px; margin-bottom: 24px;">Cadastrar Novo Cliente</div>
+            <form id="userForm" class="sim-form">
+                <input type="hidden" id="userId">
+                <div class="sim-field">
+                    <label>Nome de Usuário</label>
+                    <input type="text" id="username" placeholder="ex: joao.silva" required>
+                </div>
+                <div class="sim-field">
+                    <label>E-mail Corporativo</label>
+                    <input type="email" id="email" placeholder="ex: joao@empresa.com.br" required>
+                </div>
+                <div class="sim-field">
+                    <label>Senha</label>
+                    <input type="password" id="password" placeholder="••••••••">
+                    <small style="color: var(--text3); font-size: 10px;">Deixe em branco para manter a senha atual (na edição).</small>
+                </div>
+                <div class="sim-field">
+                    <label>Perfil de Acesso</label>
+                    <select id="role" style="background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 12px; color: var(--text);">
+                        <option value="ROLE_GERENTE">Gerente</option>
+                        <option value="ROLE_CLIENTE">Cliente</option>
+                        <option value="ROLE_FUNCIONARIO">Funcionário</option>
+                        <option value="ROLE_ADMIN">Administrador</option>
+                    </select>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:12px; margin-top: 24px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/v1/user/list');
+                if (!res.ok) throw new Error('Falha ao carregar usuários');
+                const users = await res.json();
+                const tbody = document.getElementById('users-table');
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td><strong>${u.username}</strong></td>
+                        <td>${u.email}</td>
+                        <td><span class="badge" style="background: rgba(0,255,200,0.1); color: var(--primary); padding: 4px 8px; border-radius: 4px; font-size: 10px;">${u.role}</span></td>
+                        <td style="text-align:right">
+                            <button class="btn btn-outline" onclick='editUser(${JSON.stringify(u)})' style="padding: 4px 12px; font-size: 11px; margin-right: 8px;">
+                               <i class="fa-solid fa-pen"></i> Editar
+                            </button>
+                            <button class="btn btn-outline" onclick="deleteUser(${u.id})" style="color: #ff4444; border-color: rgba(255,0,0,0.2); padding: 4px 12px; font-size: 11px;">
+                               <i class="fa-solid fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function openModal() {
+            document.getElementById('modalTitle').textContent = 'Cadastrar Novo Cliente';
+            document.getElementById('userForm').reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('password').required = true;
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function editUser(user) {
+            document.getElementById('modalTitle').textContent = 'Editar Cliente';
+            document.getElementById('userId').value = user.id;
+            document.getElementById('username').value = user.username;
+            document.getElementById('email').value = user.email;
+            document.getElementById('role').value = user.role;
+            document.getElementById('password').required = false;
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        async function deleteUser(id) {
+            if (confirm('Deseja realmente remover este cliente do sistema?')) {
+                const res = await fetch(`/api/v1/user/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    loadUsers();
+                } else {
+                    alert('Erro ao excluir usuário');
+                }
+            }
+        }
+
+        document.getElementById('userForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+            
+            const payload = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                role: document.getElementById('role').value
+            };
+
+            if (password) {
+                payload.password = password;
+            }
+
+            let url = '/api/v1/auth/register';
+            let method = 'POST';
+
+            if (id) {
+                url = `/api/v1/user/${id}`;
+                method = 'PUT';
+            }
+
+            const res = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                closeModal();
+                loadUsers();
+            } else {
+                const errText = await res.text();
+                alert('Erro ao salvar: ' + errText);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', loadUsers);
+    </script>
+</section>
+</body>
+</html>

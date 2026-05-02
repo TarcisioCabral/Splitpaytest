@@ -4,10 +4,13 @@ WORKDIR /app
 
 # Copy parent POM first for dependency caching
 COPY pom.xml /app/pom.xml
-COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/pom.xml
-COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/pom.xml
-COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/pom.xml
-COPY splitpay-frontend/pom.xml /app/splitpay-frontend/pom.xml
+COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/
+COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/
+COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/
+COPY splitpay-auth-service/pom.xml /app/splitpay-auth-service/
+COPY splitpay-reports-service/pom.xml /app/splitpay-reports-service/
+COPY splitpay-notification-service/pom.xml /app/splitpay-notification-service/
+COPY splitpay-frontend/pom.xml /app/splitpay-frontend/
 
 # Download dependencies (leverages Docker layer cache)
 RUN apk add --no-cache maven && \

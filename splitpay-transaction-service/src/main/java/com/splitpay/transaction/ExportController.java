@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.lowagie.text.DocumentException;
 import java.io.IOException;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class ExportController {
     @GetMapping("/csv")
     public void exportToCsv(HttpServletResponse response) throws IOException {
         response.setContentType("text/csv");
-        response.setHeader("Content-Disposition", "attachment; file=transactions.csv");
+        response.setHeader("Content-Disposition", "attachment; filename=transactions.csv");
 
         List<Transaction> transactions = transactionRepository.findAll();
 
@@ -48,9 +49,9 @@ public class ExportController {
     }
 
     @GetMapping("/pdf")
-    public void exportToPdf(HttpServletResponse response) throws IOException {
+    public void exportToPdf(HttpServletResponse response) throws IOException, DocumentException {
         response.setContentType("application/pdf");
-        response.setHeader("Content-Disposition", "attachment; file=transactions.pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=transactions.pdf");
 
         List<Transaction> transactions = transactionRepository.findAll();
 

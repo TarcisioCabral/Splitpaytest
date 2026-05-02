@@ -1,61 +1,97 @@
 /**
  * API Client for SplitPay IVA
- *
- * All requests use relative paths routed through the Thymeleaf frontend's
- * GatewayProxyController (/api/**), which transparently forwards them to the
- * API Gateway. No backend port is ever hardcoded here.
- *
- * Path mapping:
- *   /api/v1/...  →  GatewayProxyController  →  Gateway (gateway.url in application.properties)
- *                                            →  Backend microservice
  */
 
 const API_BASE = '/api';
 
 /**
- * Login via Keycloak — routed through Gateway's /auth endpoint.
- * The Gateway is responsible for communicating with Keycloak.
+ * Helper to get headers with Authorization token
  */
-export async function login(username, password) {
-    const body = new URLSearchParams({
-        username: username,
-        password: password,
-        grant_type: 'password'
-    });
+export function getAuthHeaders() {
+    const token = localStorage.getItem('splitpay_token');
+    const headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
+}
 
-    const resp = await fetch(`${API_BASE}/v1/auth/token`, {
+/**
+ * Login — routed through Gateway's /auth endpoint.
+ */
+export async function login(email, password) {
+    const resp = await fetch(`${API_BASE}/v1/auth/login`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
     });
 
-    if (!resp.ok) throw new Error('Falha na autenticação');
-    return await resp.json();
+    if (!resp.ok) {
+        if (resp.status === 403) throw new Error('Acesso negado ou credenciais inválidas');
+        throw new Error('Falha na autenticação');
+    }
+    
+    const data = await resp.json();
+    if (data.token) {
+        localStorage.setItem('splitpay_token', data.token);
+        localStorage.setItem('splitpay_user', JSON.stringify(data));
+    }
+    return data;
+}
+
+export function logout() {
+    localStorage.removeItem('splitpay_token');
+    localStorage.removeItem('splitpay_user');
+    window.location.href = '/login';
+}
+
+/**
+ * Check if user is authenticated
+ */
+export function isAuthenticated() {
+    return !!localStorage.getItem('splitpay_token');
+}
+
+/**
+ * Register a new user
+ */
+export async function register(username, email, password, role = 'ROLE_CLIENTE') {
+    const resp = await fetch(`${API_BASE}/v1/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password, role })
+    });
+
+    if (!resp.ok) {
+        const error = await resp.text();
+        throw new Error(error || 'Falha no registro');
+    }
+    return await resp.text();
 }
 
 /**
  * Simulador de Margem e Projeção — via Gateway
  */
 export async function getMargemProjecao(params) {
-    try {
-        const resp = await fetch(`${API_BASE}/v1/simulador/margem`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(params)
-        });
-        if (!resp.ok) throw new Error('API Offline');
-        return await resp.json();
-    } catch (e) {
-        console.warn('Simulador API offline, retornando fallback local');
-        throw e; // Let the caller handle fallback
-    }
+    const resp = await fetch(`${API_BASE}/v1/simulador/margem`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(params)
+    });
+    if (!resp.ok) throw new Error('API Offline');
+    return await resp.json();
 }
 
 /**
  * Declaração — Inicialização
  */
-export async function initDeclaracao(headers) {
-    const resp = await fetch(`${API_BASE}/v1/declaracao/init`, { headers });
+export async function initDeclaracao() {
+    const resp = await fetch(`${API_BASE}/v1/declaracao/init`, { 
+        headers: getAuthHeaders() 
+    });
     if (!resp.ok) throw new Error('Erro ao inicializar declaração');
     return await resp.json();
 }
@@ -63,10 +99,10 @@ export async function initDeclaracao(headers) {
 /**
  * Declaração — Validação
  */
-export async function validarDeclaracao(headers) {
+export async function validarDeclaracao() {
     const resp = await fetch(`${API_BASE}/v1/declaracao/validar`, {
         method: 'POST',
-        headers
+        headers: getAuthHeaders()
     });
     if (!resp.ok) throw new Error('Erro ao validar declaração');
     return await resp.json();
@@ -75,10 +111,10 @@ export async function validarDeclaracao(headers) {
 /**
  * Declaração — Resumo
  */
-export async function getResumoDeclaracao(data, headers) {
+export async function getResumoDeclaracao(data) {
     const resp = await fetch(`${API_BASE}/v1/declaracao/resumo`, {
         method: 'POST',
-        headers,
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
     if (!resp.ok) throw new Error('Erro ao gerar resumo');
@@ -91,9 +127,15 @@ export async function getResumoDeclaracao(data, headers) {
 export async function processSplit(data) {
     const resp = await fetch(`${API_BASE}/v1/split/process`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(data)
     });
+    
+    if (!resp.ok) {
+        const errorText = await resp.text();
+        throw new Error(`Erro ao processar split (${resp.status}): ${errorText}`);
+    }
+    
     return await resp.json();
 }
 
@@ -101,7 +143,9 @@ export async function processSplit(data) {
  * Buscar transações recentes
  */
 export async function getRecentTransactions() {
-    const resp = await fetch(`${API_BASE}/v1/split/recent`);
+    const resp = await fetch(`${API_BASE}/v1/split/recent`, {
+        headers: getAuthHeaders()
+    });
     if (!resp.ok) throw new Error('Erro ao buscar transações');
     return await resp.json();
 }
@@ -109,10 +153,10 @@ export async function getRecentTransactions() {
 /**
  * Download da Guia PDF
  */
-export async function downloadGuiaPDF(headers) {
+export async function downloadGuiaPDF() {
     const resp = await fetch(`${API_BASE}/v1/declaracao/download`, {
         method: 'GET',
-        headers
+        headers: getAuthHeaders()
     });
     if (!resp.ok) throw new Error('Erro ao baixar PDF');
     return await resp.blob();
@@ -120,14 +164,9 @@ export async function downloadGuiaPDF(headers) {
 
 /**
  * Cria um EventSource (SSE) para receber atualizações em tempo real
- * de uma transação específica — roteado via proxy, sem expor porta do backend.
- *
- * @param {string} nfeKey - Chave da NF-e
- * @returns {EventSource}
  */
 export function createSplitStream(nfeKey) {
     const sseUrl = `${API_BASE}/v1/split/stream/${nfeKey}`;
-    console.log('Connecting to SSE (via proxy):', sseUrl);
     return new EventSource(sseUrl);
 }
 
@@ -136,6 +175,68 @@ export function createSplitStream(nfeKey) {
  */
 export function createDashboardStream() {
     const sseUrl = `${API_BASE}/v1/split/stream/dashboard`;
-    console.log('Connecting to Dashboard SSE (via proxy):', sseUrl);
     return new EventSource(sseUrl);
 }
+
+/**
+ * Upload de arquivo para processamento em lote (Bulk)
+ */
+export async function uploadBulkFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const headers = getAuthHeaders();
+    delete headers['Content-Type']; // Let browser set boundary
+
+    const resp = await fetch(`${API_BASE}/v1/bulk/upload`, {
+        method: 'POST',
+        headers: headers,
+        body: formData
+    });
+
+    if (!resp.ok) throw new Error('Erro no upload em lote: ' + resp.status);
+    return await resp.json();
+}
+
+/**
+ * Reports - Tendência por período
+ */
+export async function getTrendsByPeriod() {
+    const resp = await fetch(`${API_BASE}/v1/reports/trends/period`, {
+        headers: getAuthHeaders()
+    });
+    if (!resp.ok) throw new Error('Erro ao buscar tendências por período');
+    return await resp.json();
+}
+
+/**
+ * Reports - Tendência por segmento
+ */
+export async function getTrendsBySegment() {
+    const resp = await fetch(`${API_BASE}/v1/reports/trends/segment`, {
+        headers: getAuthHeaders()
+    });
+    if (!resp.ok) throw new Error('Erro ao buscar tendências por segmento');
+    return await resp.json();
+}
+
+/**
+ * Handle OAuth2 Redirect tokens
+ */
+(function handleOAuth2Redirect() {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const email = params.get('email');
+    const username = params.get('username');
+
+    if (token) {
+        localStorage.setItem('splitpay_token', token);
+        if (email) {
+            localStorage.setItem('splitpay_user', JSON.stringify({ token, email, username }));
+        }
+        
+        // Limpa a URL e redireciona para o dashboard limpo
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+})();

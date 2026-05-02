@@ -54,10 +54,44 @@
   </div>
 </div>
 
+<div class="analytics-grid">
+  <div class="card chart-container">
+    <div class="card-title">Tendência de Arrecadação (IBS + CBS)</div>
+    <div class="chart-wrapper">
+      <canvas id="trendChart"></canvas>
+    </div>
+  </div>
+  <div class="card chart-container">
+    <div class="card-title">Distribuição por Segmento</div>
+    <div class="chart-wrapper">
+      <canvas id="segmentChart"></canvas>
+    </div>
+  </div>
+  <div class="card projection-card">
+    <div class="card-title">Impacto Reforma 2027 <span class="badge badge-info">PROJEÇÃO</span></div>
+    <div class="projection-content">
+      <div class="projection-item">
+        <span class="proj-label">Retenção Atual (1%)</span>
+        <span class="proj-value" id="proj-current">R$ 0,00</span>
+      </div>
+      <div class="projection-divider"></div>
+      <div class="projection-item highlight">
+        <span class="proj-label">Retenção Projetada (26.5%)</span>
+        <span class="proj-value" id="proj-future">R$ 0,00</span>
+      </div>
+      <p class="proj-desc">Baseado no volume transacionado nas últimas 24h sob as novas alíquotas plenas.</p>
+    </div>
+  </div>
+</div>
+
 <div class="card">
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
     <div class="card-title" style="margin-bottom: 0;">Últimas transações processadas <span class="badge badge-success" style="margin-left: 8px;">LIVE</span></div>
-    <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-play"></i> Simular Envio NF-e</button>
+    <div style="display:flex; gap: 8px;">
+        <input type="file" id="bulk-file-input" style="display:none;" accept=".txt,.csv">
+        <button id="btn-bulk-upload" style="background:var(--secondary); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-file-upload"></i> Upload em Lote</button>
+        <button id="btn-simulate-nfe" style="background:var(--primary); color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-play"></i> Simular Envio NF-e</button>
+    </div>
   </div>
   <table class="tx-table table-minimalist">
     <thead>
@@ -73,6 +107,72 @@
         <button class="page-btn">2</button>
         <button class="page-btn">3</button>
         <button class="page-btn">&gt;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Simulação NF-e -->
+<div id="modal-simula-nfe" class="modal">
+  <div class="modal-content animate__animated animate__fadeInDown">
+    <div class="modal-header">
+      <h3 class="modal-title">Simular Envio de NF-e</h3>
+      <button class="close-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-simulation">
+        <div class="form-group">
+          <label for="sim-nfe-key">Chave NF-e</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="sim-nfe-key" style="flex:1" placeholder="44 dígitos..." maxlength="44" required>
+            <button type="button" id="btn-gen-key" style="background:var(--bg3); border:1px solid var(--border); padding:0 12px; border-radius:8px; cursor:pointer; color:var(--text1);" title="Gerar chave aleatória"><i class="fa-solid fa-sync"></i></button>
+          </div>
+        </div>
+        
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label for="sim-valor">Valor Bruto (R$)</label>
+            <input type="number" id="sim-valor" placeholder="0,00" step="0.01" min="0.01" style="width:100%" required>
+          </div>
+          <div class="form-group">
+            <label for="sim-segmento">Segmento</label>
+            <select id="sim-segmento" style="width:100%" required>
+              <option value="VAREJO">Varejo</option>
+              <option value="SERVICOS">Serviços</option>
+              <option value="INDUSTRIA">Indústria</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="sim-adquirente">Adquirente</label>
+          <select id="sim-adquirente" style="width:100%" required>
+            <option value="VISA">Visa</option>
+            <option value="MASTERCARD">Mastercard</option>
+            <option value="STONE">Stone</option>
+            <option value="PAGSEGURO">PagSeguro</option>
+          </select>
+        </div>
+
+        <div id="sim-lifecycle" class="sim-lifecycle" style="display:none; margin-top:20px; padding:16px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid var(--border);">
+          <div class="step" id="step-1">
+            <div class="step-dot"></div>
+            <div class="step-text">Envio NF-e</div>
+          </div>
+          <div class="step" id="step-2">
+            <div class="step-dot"></div>
+            <div class="step-text">Cálculo Split</div>
+          </div>
+          <div class="step" id="step-3">
+            <div class="step-dot"></div>
+            <div class="step-text">ROC / Conciliação</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px;">
+          <button type="button" class="btn-cancel close-modal" style="background:transparent; border:1px solid var(--border); color:var(--text2); padding:10px 20px; border-radius:8px; cursor:pointer;">Cancelar</button>
+          <button type="submit" id="btn-submit-sim" style="background:var(--primary); color:white; border:none; padding:10px 24px; border-radius:8px; cursor:pointer; font-weight:600;">Iniciar Simulação</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

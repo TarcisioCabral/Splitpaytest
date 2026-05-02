@@ -2,6 +2,7 @@ package com.splitpay.transaction;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -41,7 +42,8 @@ public class Transaction {
     @Column(name = "exchange_rate")
     private BigDecimal exchangeRate = BigDecimal.ONE;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
 
 }

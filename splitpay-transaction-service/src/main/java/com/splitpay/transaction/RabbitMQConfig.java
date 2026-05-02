@@ -12,4 +12,9 @@ public class RabbitMQConfig {
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
+
+    @Bean
+    public org.springframework.amqp.core.Queue conciliationQueue() {
+        return new org.springframework.amqp.core.Queue("conciliation.completed", true);
+    }
 }

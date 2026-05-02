@@ -25,7 +25,7 @@ public class FrontendController {
         return "simulador";
     }
 
-    @GetMapping("/api")
+    @GetMapping("/api-docs")
     public String apiDocs(Model model) {
         model.addAttribute("activeTab", "api");
         return "api";
@@ -53,6 +53,12 @@ public class FrontendController {
     public String settings(Model model) {
         model.addAttribute("activeTab", "settings");
         return "settings";
+    }
+
+    @GetMapping("/clientes")
+    public String clientes(Model model) {
+        model.addAttribute("activeTab", "clientes");
+        return "clientes";
     }
     
     @GetMapping("/login")

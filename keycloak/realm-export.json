@@ -1,6 +1,22 @@
 {
   "realm": "splitpay",
   "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "gerente",
+        "description": "Perfil de Gerente"
+      },
+      {
+        "name": "cliente",
+        "description": "Perfil de Cliente"
+      },
+      {
+        "name": "funcionario",
+        "description": "Perfil de Funcionário"
+      }
+    ]
+  },
   "users": [
     {
       "username": "admin",
@@ -16,6 +32,63 @@
           "value": "admin",
           "temporary": false
         }
+      ]
+    },
+    {
+      "username": "gerente@empresa.com.br",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "João",
+      "lastName": "Gerente",
+      "email": "gerente@empresa.com.br",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "gerente123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "gerente"
+      ]
+    },
+    {
+      "username": "cliente@empresa.com.br",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Maria",
+      "lastName": "Cliente",
+      "email": "cliente@empresa.com.br",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "cliente123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "cliente"
+      ]
+    },
+    {
+      "username": "funcionario@empresa.com.br",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Pedro",
+      "lastName": "Funcionário",
+      "email": "funcionario@empresa.com.br",
+      "requiredActions": [],
+      "credentials": [
+        {
+          "type": "password",
+          "value": "funcionario123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "funcionario"
       ]
     }
   ],

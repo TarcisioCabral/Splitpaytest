@@ -1,15 +1,20 @@
 package com.splitpay.frontend.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
@@ -31,6 +36,8 @@ import java.util.Enumeration;
 @RequestMapping("/api")
 public class GatewayProxyController {
 
+    private static final Logger log = LoggerFactory.getLogger(GatewayProxyController.class);
+
     private final RestTemplate restTemplate;
 
     @Value("${gateway.url}")
@@ -48,24 +55,29 @@ public class GatewayProxyController {
     public ResponseEntity<StreamingResponseBody> proxySse(HttpServletRequest request) {
         String path = request.getRequestURI().replaceFirst("^/api", "");
         String targetUri = gatewayUrl + path;
+        log.info("Proxying SSE request to: {}", targetUri);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .body(outputStream -> {
-                    restTemplate.execute(targetUri, HttpMethod.GET, req -> {
-                        // Forward authorization header if present
-                        String auth = request.getHeader("Authorization");
-                        if (auth != null) req.getHeaders().set("Authorization", auth);
-                    }, response -> {
-                        InputStream inputStream = response.getBody();
-                        byte[] buffer = new byte[8192];
-                        int bytesRead;
-                        while ((bytesRead = inputStream.read(buffer)) != -1) {
-                            outputStream.write(buffer, 0, bytesRead);
-                            outputStream.flush();
-                        }
-                        return null;
-                    });
+                    try {
+                        restTemplate.execute(targetUri, HttpMethod.GET, req -> {
+                            String auth = request.getHeader("Authorization");
+                            if (auth != null) req.getHeaders().set("Authorization", auth);
+                        }, response -> {
+                            try (InputStream inputStream = response.getBody()) {
+                                byte[] buffer = new byte[1024];
+                                int bytesRead;
+                                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                                    outputStream.write(buffer, 0, bytesRead);
+                                    outputStream.flush();
+                                }
+                            }
+                            return null;
+                        });
+                    } catch (Exception e) {
+                        log.error("SSE Proxy error for {}: {}", targetUri, e.getMessage());
+                    }
                 });
     }
 
@@ -73,41 +85,44 @@ public class GatewayProxyController {
     //  Generic proxy — handles GET, POST, PUT, DELETE, PATCH              //
     // ------------------------------------------------------------------ //
 
-    @RequestMapping(value = "/**",
-            produces = {MediaType.APPLICATION_JSON_VALUE,
-                        MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                        MediaType.ALL_VALUE})
+    @RequestMapping(value = "/**", produces = MediaType.ALL_VALUE)
     public ResponseEntity<byte[]> proxy(
             HttpServletRequest request,
-            @RequestBody(required = false) byte[] body) throws Exception {
+            @RequestBody(required = false) byte[] body) {
 
-        String path = request.getRequestURI().replaceFirst("^/api", "");
+        try {
+            String path = request.getRequestURI().replaceFirst("^/api", "");
+            if (path.startsWith("/v1/split/stream/")) return null;
 
-        // Skip SSE paths as they are handled by proxySse
-        if (path.startsWith("/v1/split/stream/")) {
-            return null; // Should be handled by proxySse due to more specific mapping or produces
-        }
-        String queryString = request.getQueryString();
-        String targetUri = gatewayUrl + path + (queryString != null ? "?" + queryString : "");
+            String queryString = request.getQueryString();
+            String targetUri = gatewayUrl + path + (queryString != null ? "?" + queryString : "");
+            
+            log.info("Proxying {} request to: {}", request.getMethod(), targetUri);
 
-        // Copy incoming headers (forward Authorization, Content-Type, etc.)
-        HttpHeaders headers = new HttpHeaders();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        if (headerNames != null) {
-            for (String name : Collections.list(headerNames)) {
-                // Skip hop-by-hop headers
-                if (!name.equalsIgnoreCase("host") &&
-                    !name.equalsIgnoreCase("connection") &&
-                    !name.equalsIgnoreCase("transfer-encoding")) {
+            HttpHeaders headers = new HttpHeaders();
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames != null && headerNames.hasMoreElements()) {
+                String name = headerNames.nextElement();
+                if (!name.equalsIgnoreCase("host") && !name.equalsIgnoreCase("connection")) {
                     headers.set(name, request.getHeader(name));
                 }
             }
+
+            HttpMethod method = HttpMethod.valueOf(request.getMethod());
+            RequestEntity<byte[]> requestEntity = new RequestEntity<>(body, headers, method, URI.create(targetUri));
+            
+            return restTemplate.exchange(requestEntity, byte[].class);
+
+        } catch (HttpStatusCodeException e) {
+            log.warn("Downstream error: {} {}", e.getStatusCode(), request.getRequestURI());
+            return ResponseEntity.status(e.getStatusCode())
+                    .headers(e.getResponseHeaders())
+                    .body(e.getResponseBodyAsByteArray());
+        } catch (Exception e) {
+            log.error("Proxy failure for {}: {}", request.getRequestURI(), e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(("{\"error\": \"Proxy Error\", \"message\": \"" + e.getMessage() + "\"}").getBytes());
         }
-
-        HttpMethod method = HttpMethod.valueOf(request.getMethod());
-        RequestEntity<byte[]> requestEntity =
-                new RequestEntity<>(body, headers, method, URI.create(targetUri));
-
-        return restTemplate.exchange(requestEntity, byte[].class);
     }
 }

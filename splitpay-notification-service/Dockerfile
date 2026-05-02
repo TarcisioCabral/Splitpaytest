@@ -1,13 +1,42 @@
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
+# ─── Stage 1: Build ───────────────────────────────────────────────────────────
+FROM eclipse-temurin:17-jdk-alpine AS builder
 WORKDIR /app
-COPY pom.xml .
-COPY splitpay-notification-service/pom.xml splitpay-notification-service/
-RUN mvn dependency:go-offline -pl splitpay-notification-service -am
-COPY splitpay-notification-service/src splitpay-notification-service/src
-RUN mvn package -DskipTests -pl splitpay-notification-service -am
 
+# Copy parent POM first for dependency caching
+COPY pom.xml /app/pom.xml
+COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/
+COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/
+COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/
+COPY splitpay-auth-service/pom.xml /app/splitpay-auth-service/
+COPY splitpay-reports-service/pom.xml /app/splitpay-reports-service/
+COPY splitpay-notification-service/pom.xml /app/splitpay-notification-service/
+COPY splitpay-frontend/pom.xml /app/splitpay-frontend/
+
+# Download dependencies
+RUN apk add --no-cache maven && \
+    mvn -f /app/pom.xml dependency:go-offline -pl splitpay-notification-service -am -q
+
+# Copy source and build
+COPY splitpay-notification-service/src /app/splitpay-notification-service/src
+RUN mvn -f /app/pom.xml package -pl splitpay-notification-service -am -DskipTests -q
+
+# ─── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /app/splitpay-notification-service/target/*.jar app.jar
+
+LABEL org.opencontainers.image.title="Splitpay Notification Service"
+LABEL org.opencontainers.image.description="SSE and RabbitMQ notification consumer"
+
+# Non-root user
+RUN addgroup -S splitpay && adduser -S splitpay -G splitpay
+USER splitpay
+
+COPY --from=builder /app/splitpay-notification-service/target/notification-service-0.0.1-SNAPSHOT.jar app.jar
+
 EXPOSE 8087
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+ENTRYPOINT ["java", \
+  "-XX:+UseContainerSupport", \
+  "-XX:MaxRAMPercentage=75.0", \
+  "-Djava.security.egd=file:/dev/./urandom", \
+  "-jar", "app.jar"]

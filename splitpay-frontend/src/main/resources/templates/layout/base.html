@@ -11,26 +11,28 @@
 
 <body>
 
-  <div class="topbar">
+  <div class="topbar" th:unless="${hideNav}">
     <div class="logo">
       <div class="logo-icon">⚡</div>
       <span class="logo-name">SplitPay IVA</span>
       <span class="logo-tag">BETA 2026</span>
     </div>
     <div class="topbar-right">
-      <button id="btn-login" class="sim-btn" onclick="simularLogin()" style="padding: 6px 12px; font-size: 12px;">Simular Login Keycloak</button>
+      <span id="user-display" style="color: var(--text3); font-size: 12px; margin-right: 12px;"></span>
+      <button class="sim-btn" onclick="handleLogout()" style="padding: 6px 12px; font-size: 12px; background: rgba(255,68,68,0.1); color: #ff4444; border-color: rgba(255,68,68,0.2);">Sair</button>
       <div class="status-dot" id="status-dot"></div>
       <span class="status-text" id="status-text">ROC: CONNECTED</span>
       <span class="badge-env">FASE TESTE · 1%</span>
     </div>
   </div>
-
-  <div class="nav-tabs">
+ 
+  <div class="nav-tabs" th:unless="${hideNav}">
     <a th:href="@{/dashboard}" class="nav-tab" th:classappend="${activeTab == 'dashboard' ? 'active' : ''}">Dashboard</a>
     <a th:href="@{/conciliacao}" class="nav-tab" th:classappend="${activeTab == 'conciliacao' ? 'active' : ''}">Conciliação NF-e</a>
     <a th:href="@{/simulador}" class="nav-tab" th:classappend="${activeTab == 'simulador' ? 'active' : ''}">Simulador de Margem</a>
     <a th:href="@{/reports}" class="nav-tab" th:classappend="${activeTab == 'reports' ? 'active' : ''}">Relatórios</a>
     <a th:href="@{/declaracao}" class="nav-tab" th:classappend="${activeTab == 'declaracao' ? 'active' : ''}">Declaração (IBS/CBS)</a>
+    <a th:href="@{/clientes}" class="nav-tab" th:classappend="${activeTab == 'clientes' ? 'active' : ''}">Clientes</a>
     <a th:href="@{/settings}" class="nav-tab" th:classappend="${activeTab == 'settings' ? 'active' : ''}">Configurações</a>
     <a th:href="@{/api}" class="nav-tab" th:classappend="${activeTab == 'api' ? 'active' : ''}">API Docs</a>
     <a th:href="@{/roadmap}" class="nav-tab" th:classappend="${activeTab == 'roadmap' ? 'active' : ''}">Roadmap</a>
@@ -40,6 +42,23 @@
      <div th:replace="${content}"></div>
   </main>
 
+  <script type="module">
+    import { isAuthenticated, logout } from '/frontend/api.js';
+    
+    // Auth Guard
+    if (!isAuthenticated() && !window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
+      window.location.href = '/login';
+    }
+
+    // Display user info
+    const userData = localStorage.getItem('splitpay_user');
+    if (userData) {
+      const user = JSON.parse(userData);
+      document.getElementById('user-display').textContent = user.username || user.email;
+    }
+
+    window.handleLogout = logout;
+  </script>
   <script th:src="@{/frontend/api.js}" type="module"></script>
 </body>
 </html>

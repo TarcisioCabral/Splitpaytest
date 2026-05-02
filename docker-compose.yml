@@ -23,9 +23,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: splitpay
     ports:
-      - "5433:5432"
+      - "5435:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     healthcheck:
       <<: *healthcheck-defaults
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d splitpay"]
@@ -37,8 +38,8 @@ services:
     container_name: splitpay-rabbitmq
     restart: always
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5674:5672"
+      - "15674:15672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -55,15 +56,16 @@ services:
     command: start-dev --import-realm
     environment:
       KC_DB: dev-file
+      KC_HEALTH_ENABLED: "true"
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     ports:
-      - "8180:8080"
+      - "9182:8080"
     volumes:
       - ./keycloak:/opt/keycloak/data/import
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/master || exit 1"]
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080 && echo -e \"GET /health/live HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && cat <&3 | grep -q \"UP\""]
     networks:
       - splitpay-network
 
@@ -75,10 +77,10 @@ services:
     container_name: splitpay-transaction-service
     restart: on-failure
     ports:
-      - "8081:8081"
+      - "9081:8081"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DB_URL: jdbc:postgresql://db:5432/splitpay
+      DB_URL: jdbc:postgresql://db:5432/splitpay_transaction
       DB_USER: ${POSTGRES_USER}
       DB_PASS: ${POSTGRES_PASSWORD}
       RABBITMQ_HOST: rabbitmq
@@ -92,7 +94,7 @@ services:
         condition: service_healthy
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
     networks:
       - splitpay-network
 
@@ -103,10 +105,10 @@ services:
     container_name: splitpay-conciliation-service
     restart: on-failure
     ports:
-      - "8082:8082"
+      - "9082:8082"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      DB_URL: jdbc:postgresql://db:5432/splitpay
+      DB_URL: jdbc:postgresql://db:5432/splitpay_conciliation
       DB_USER: ${POSTGRES_USER}
       DB_PASS: ${POSTGRES_PASSWORD}
       RABBITMQ_HOST: rabbitmq
@@ -120,7 +122,7 @@ services:
         condition: service_healthy
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
     networks:
       - splitpay-network
 
@@ -131,12 +133,18 @@ services:
     container_name: splitpay-auth-service
     restart: on-failure
     ports:
-      - "8084:8084"
+      - "9084:8084"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/splitpay_auth
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8084/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
     networks:
       - splitpay-network
 
@@ -147,10 +155,10 @@ services:
     container_name: splitpay-reports-service
     restart: on-failure
     ports:
-      - "8086:8086"
+      - "9086:8086"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/splitpay
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/splitpay_reports
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
@@ -158,7 +166,7 @@ services:
         condition: service_healthy
     healthcheck:
       <<: *healthcheck-defaults
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8086/actuator/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8086/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
     networks:
       - splitpay-network
  
@@ -187,7 +195,7 @@ services:
     container_name: splitpay-api-gateway
     restart: on-failure
     ports:
-      - "8085:8085"
+      - "9085:8085"
     environment:
       SPRING_PROFILES_ACTIVE: prod
       TRANSACTION_SERVICE_URL: http://transaction-service:8081
@@ -211,9 +219,10 @@ services:
     container_name: splitpay-frontend
     restart: on-failure
     ports:
-      - "8080:8080"
+      - "9080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      GATEWAY_URL: http://api-gateway:8085
     depends_on:
       api-gateway:
         condition: service_started

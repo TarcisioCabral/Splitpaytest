@@ -4,11 +4,13 @@ WORKDIR /app
 
 # Copy parent POM first for dependency caching
 COPY pom.xml /app/pom.xml
-COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/pom.xml
-COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/pom.xml
-COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/pom.xml
-COPY splitpay-auth-service/pom.xml /app/splitpay-auth-service/pom.xml
-COPY splitpay-frontend/pom.xml /app/splitpay-frontend/pom.xml
+COPY splitpay-api-gateway/pom.xml /app/splitpay-api-gateway/
+COPY splitpay-transaction-service/pom.xml /app/splitpay-transaction-service/
+COPY splitpay-conciliation-service/pom.xml /app/splitpay-conciliation-service/
+COPY splitpay-auth-service/pom.xml /app/splitpay-auth-service/
+COPY splitpay-reports-service/pom.xml /app/splitpay-reports-service/
+COPY splitpay-notification-service/pom.xml /app/splitpay-notification-service/
+COPY splitpay-frontend/pom.xml /app/splitpay-frontend/
 
 # Download dependencies
 RUN apk add --no-cache maven && \
@@ -23,7 +25,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 LABEL org.opencontainers.image.title="Splitpay Auth Service"
-LABEL org.opencontainers.image.description="Authentication Service with JWT and H2"
+LABEL org.opencontainers.image.description="Authentication Service with JWT and PostgreSQL"
 
 # Non-root user
 RUN addgroup -S splitpay && adduser -S splitpay -G splitpay
