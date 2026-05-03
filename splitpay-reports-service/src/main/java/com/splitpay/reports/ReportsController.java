@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ import java.util.Map;
 public class ReportsController {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ReportExportService reportExportService;
 
     /**
      * Retorna a tendência de retenção por segmento.
@@ -45,6 +50,36 @@ public class ReportsController {
         } catch (Exception e) {
             log.error("Error fetching trends by period: {}", e.getMessage());
             return List.of();
+        }
+    }
+
+    /**
+     * Exporta as transações para Excel.
+     */
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportToExcel(
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate) {
+        try {
+            byte[] excelData = reportExportService.generateExcelReport(startDate, endDate);
+            
+            String filename = "relatorio_retencao";
+            if (startDate != null && endDate != null) {
+                filename += "_" + startDate + "_ate_" + endDate;
+            } else if (startDate != null) {
+                filename += "_a_partir_de_" + startDate;
+            } else if (endDate != null) {
+                filename += "_ate_" + endDate;
+            }
+            filename += ".xlsx";
+
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                    .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(excelData);
+        } catch (Exception e) {
+            log.error("Error exporting to Excel: {}", e.getMessage());
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
