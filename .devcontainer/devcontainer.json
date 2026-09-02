@@ -1,0 +1,56 @@
+{
+  "name": "SplitPay",
+  "image": "mcr.microsoft.com/devcontainers/java:1-17-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true,
+      "dockerDashComposeVersion": "v2"
+    }
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb",
+    "storage": "32gb"
+  },
+  "forwardPorts": [
+    9080,
+    9081,
+    9082,
+    9084,
+    9085,
+    9086,
+    9087,
+    9182,
+    15674
+  ],
+  "portsAttributes": {
+    "9080": {
+      "label": "SplitPay Dashboard",
+      "onAutoForward": "openBrowser"
+    },
+    "9085": {
+      "label": "API Gateway",
+      "onAutoForward": "silent"
+    },
+    "9182": {
+      "label": "Keycloak",
+      "onAutoForward": "silent"
+    },
+    "15674": {
+      "label": "RabbitMQ Management",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "test -f .env || cp .env.example .env",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "vmware.vscode-spring-boot",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker"
+      ]
+    }
+  }
+}
